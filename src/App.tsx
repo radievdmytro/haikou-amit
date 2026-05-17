@@ -857,11 +857,10 @@ export default function App() {
   const [heroBgClicks, setHeroBgClicks] = React.useState(0);
   const [containerDropData, setContainerDropData] = React.useState({ show: false, index: 0, startX: '50%', initRot: -20, endRot: 45 });
 
-  // Franchise Easter Egg
   const [franchiseClicks, setFranchiseClicks] = React.useState(0);
   const [fallingBills, setFallingBills] = React.useState<Array<{
     id: number;
-    type: 'dollar' | 'euro' | 'yuan';
+    type: 'dollar' | 'dollar_50' | 'dollar_20' | 'euro' | 'euro_50' | 'euro_200' | 'euro_500' | 'yuan' | 'yuan_50' | 'yuan_20';
     startX: string;
     initRot: number;
     swayAmp: number;
@@ -874,7 +873,11 @@ export default function App() {
     setFranchiseClicks(prev => {
       const next = prev + 1;
       if (next >= 15) {
-        const types: Array<'dollar' | 'euro' | 'yuan'> = ['dollar', 'euro', 'yuan'];
+        const types: Array<'dollar' | 'dollar_50' | 'dollar_20' | 'euro' | 'euro_50' | 'euro_200' | 'euro_500' | 'yuan' | 'yuan_50' | 'yuan_20'> = [
+          'dollar', 'dollar_50', 'dollar_20',
+          'euro', 'euro_50', 'euro_200', 'euro_500',
+          'yuan', 'yuan_50', 'yuan_20'
+        ];
         const randomType = types[Math.floor(Math.random() * types.length)];
         const startX = `${10 + Math.random() * 80}%`;
         const initRot = Math.floor(Math.random() * 360);
