@@ -1653,17 +1653,15 @@ export default function App() {
               >
                 <AnimatePresence>
                   {fallingBills.map(bill => (
-                    <motion.img
+                    <motion.div
                       key={bill.id}
-                      initial={{ y: -200, x: 0, rotate: bill.initRot, rotateY: 0, rotateX: 0, skewX: 0, skewY: 0, opacity: 0 }}
+                      initial={{ y: -200, x: 0, rotate: bill.initRot, rotateY: 0, rotateX: 0, opacity: 0 }}
                       animate={{
                         y: typeof window !== 'undefined' ? window.innerHeight + 200 : 1000,
                         x: [0, bill.swayAmp, -bill.swayAmp, bill.swayAmp, -bill.swayAmp, bill.swayAmp, 0],
-                        rotate: [bill.initRot, bill.initRot + 360, bill.initRot + 720],
-                        rotateY: [0, 360, 720, 1080],
-                        rotateX: [0, 180, 360, 540],
-                        skewX: [0, -15, 15, -15, 15, -15, 0],
-                        skewY: [0, 5, -5, 5, -5, 5, 0],
+                        rotate: [bill.initRot, bill.initRot + 180, bill.initRot + 360],
+                        rotateY: [0, 360, 720],
+                        rotateX: [0, 90, 180, 270, 360],
                         opacity: [0, 1, 1, 1, 0]
                       }}
                       exit={{ opacity: 0 }}
@@ -1673,20 +1671,78 @@ export default function App() {
                         rotate: { duration: bill.fallDuration, ease: "easeInOut" },
                         rotateY: { duration: bill.fallDuration, ease: "easeInOut" },
                         rotateX: { duration: bill.fallDuration, ease: "easeInOut" },
-                        skewX: { duration: bill.fallDuration, ease: "easeInOut" },
-                        skewY: { duration: bill.fallDuration, ease: "easeInOut" },
                         opacity: { duration: bill.fallDuration, ease: "linear", times: [0, 0.1, 0.8, 0.9, 1] }
                       }}
-                      src={`${bill.type}.webp`}
-                      alt="Banknote"
-                      className="absolute w-24 sm:w-32 md:w-36 h-auto object-contain pointer-events-none drop-shadow-[0_20px_35px_rgba(0,0,0,0.2)]"
+                      className="absolute w-[120px] md:w-[160px] h-[50px] md:h-[67px] pointer-events-none"
                       style={{ 
                         left: bill.startX, 
                         translateX: '-50%',
                         transformStyle: 'preserve-3d',
-                        backfaceVisibility: 'visible'
+                        display: 'flex'
                       }}
-                    />
+                    >
+                      {/* Left Segment */}
+                      <motion.div
+                        animate={{
+                          rotateY: [-30, 30, -30, 30, -30]
+                        }}
+                        transition={{
+                          duration: bill.fallDuration,
+                          ease: "easeInOut"
+                        }}
+                        style={{
+                          width: '33.33%',
+                          height: '100%',
+                          backgroundImage: `url(${bill.type}.webp)`,
+                          backgroundSize: '300% 100%',
+                          backgroundPosition: '0% 0%',
+                          backgroundRepeat: 'no-repeat',
+                          transformOrigin: 'right center',
+                          transformStyle: 'preserve-3d',
+                          borderTopLeftRadius: '2px',
+                          borderBottomLeftRadius: '2px',
+                          filter: 'drop-shadow(0 10px 15px rgba(0,0,0,0.15))'
+                        }}
+                      />
+
+                      {/* Center Segment */}
+                      <div
+                        style={{
+                          width: '33.34%',
+                          height: '100%',
+                          backgroundImage: `url(${bill.type}.webp)`,
+                          backgroundSize: '300% 100%',
+                          backgroundPosition: '50% 0%',
+                          backgroundRepeat: 'no-repeat',
+                          transformStyle: 'preserve-3d',
+                          filter: 'drop-shadow(0 10px 15px rgba(0,0,0,0.15))'
+                        }}
+                      />
+
+                      {/* Right Segment */}
+                      <motion.div
+                        animate={{
+                          rotateY: [30, -30, 30, -30, 30]
+                        }}
+                        transition={{
+                          duration: bill.fallDuration,
+                          ease: "easeInOut"
+                        }}
+                        style={{
+                          width: '33.33%',
+                          height: '100%',
+                          backgroundImage: `url(${bill.type}.webp)`,
+                          backgroundSize: '300% 100%',
+                          backgroundPosition: '100% 0%',
+                          backgroundRepeat: 'no-repeat',
+                          transformOrigin: 'left center',
+                          transformStyle: 'preserve-3d',
+                          borderTopRightRadius: '2px',
+                          borderBottomRightRadius: '2px',
+                          filter: 'drop-shadow(0 10px 15px rgba(0,0,0,0.15))'
+                        }}
+                      />
+                    </motion.div>
                   ))}
                 </AnimatePresence>
               </div>
