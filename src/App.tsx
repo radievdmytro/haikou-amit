@@ -82,7 +82,7 @@ const AssembledSection = ({ children, id, className = "", stiffness = 120, dampi
   );
 };
 
-const AttentionButton = ({ children, onClick, className, style }: { children: React.ReactNode, onClick: (e: any) => void, className?: string, style?: any }) => {
+const AttentionButton = ({ children, onClick, className, style, wrapperClassName = "lg:inline-block lg:w-auto" }: { children: React.ReactNode, onClick: (e: any) => void, className?: string, style?: any, wrapperClassName?: string }) => {
   const ref = React.useRef(null);
   const isInView = useInView(ref, { amount: 0.5 });
   const [phase, setPhase] = React.useState<'idle' | 'shimmer'>('idle');
@@ -117,7 +117,7 @@ const AttentionButton = ({ children, onClick, className, style }: { children: Re
   }, [isInView]);
 
   return (
-    <div ref={ref} className="relative flex justify-center w-full lg:inline-block lg:w-auto">
+    <div ref={ref} className={`relative flex justify-center w-full ${wrapperClassName}`}>
       <button
         onClick={onClick}
         className={`${className} relative overflow-hidden transition-all duration-500 ease-out active:scale-95`}
@@ -169,40 +169,40 @@ const Counter = ({ value, duration = 2 }: { value: number, duration?: number }) 
 
 const ScrambleText = ({ text, className = "" }: { text: string, className?: string }) => {
   const [displayText, setDisplayText] = React.useState(text);
-  
+
   React.useEffect(() => {
     const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     const targetArr = text.split('');
     let currentArr = targetArr.map(c => c === ' ' ? ' ' : letters[Math.floor(Math.random() * 26)]);
-    
+
     const indices = targetArr.map((_, i) => i).filter(i => targetArr[i] !== ' ');
     for (let i = indices.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [indices[i], indices[j]] = [indices[j], indices[i]];
     }
-    
+
     let resolvedCount = 0;
     setDisplayText(currentArr.join(''));
-    
+
     const interval = setInterval(() => {
       for (let i = 0; i < currentArr.length; i++) {
         if (currentArr[i] !== targetArr[i] && currentArr[i] !== ' ') {
           currentArr[i] = letters[Math.floor(Math.random() * 26)];
         }
       }
-      
+
       if (resolvedCount < indices.length) {
         currentArr[indices[resolvedCount]] = targetArr[indices[resolvedCount]];
         resolvedCount++;
       }
-      
+
       setDisplayText(currentArr.join(''));
-      
+
       if (resolvedCount >= indices.length) {
         clearInterval(interval);
       }
     }, 50);
-    
+
     return () => clearInterval(interval);
   }, [text]);
 
@@ -1155,7 +1155,8 @@ export default function App() {
                     <p className="text-[10px] uppercase tracking-[0.3em] text-charcoal/40 font-bold">New to Haikou Amit?</p>
                     <AttentionButton
                       onClick={(e) => scrollToSection(e as any, 'about')}
-                      className="px-16 py-7 bg-gold text-white rounded-full font-bold text-[14px] uppercase tracking-[0.25em] shadow-2xl shadow-gold/20 hover:scale-105 transition-all duration-300 cursor-pointer flex items-center justify-center gap-3 group"
+                      wrapperClassName="lg:w-full lg:max-w-md"
+                      className="w-full max-w-md px-16 py-7 bg-gold text-white rounded-full font-bold text-[14px] uppercase tracking-[0.25em] shadow-2xl shadow-gold/20 hover:scale-105 transition-all duration-300 cursor-pointer flex items-center justify-center gap-3 group"
                     >
                       Learn More About Us
                       <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform" />
