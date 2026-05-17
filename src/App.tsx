@@ -1645,105 +1645,79 @@ export default function App() {
                 className="absolute inset-0 z-0 cursor-default pointer-events-auto" 
                 onClick={handleFranchiseClick}
               />
-
               {/* Falling Banknotes Overlay */}
               <div 
                 className="absolute inset-0 pointer-events-none z-30 overflow-hidden"
-                style={{ perspective: "1000px", transformStyle: "preserve-3d" }}
               >
+                {/* Hidden SVG Filters – one per possible bill, each with its own animated seed */}
+                <svg width="0" height="0" style={{ position: 'absolute' }}>
+                  <defs>
+                    {[0,1,2,3,4,5,6,7,8,9].map(i => (
+                      <filter key={i} id={`bill-wave-${i}`} x="-10%" y="-10%" width="120%" height="120%">
+                        <feTurbulence
+                          type="sinusoid"
+                          baseFrequency="0.04 0.0"
+                          numOctaves="2"
+                          result="wave"
+                          seed={i + 1}
+                        >
+                          <animate
+                            attributeName="baseFrequency"
+                            values="0.02 0.0;0.06 0.01;0.02 0.0"
+                            dur={`${1.2 + i * 0.15}s`}
+                            repeatCount="indefinite"
+                          />
+                          <animate
+                            attributeName="seed"
+                            values={`${i + 1};${i + 5};${i + 1}`}
+                            dur={`${2.5 + i * 0.2}s`}
+                            repeatCount="indefinite"
+                          />
+                        </feTurbulence>
+                        <feDisplacementMap in="SourceGraphic" in2="wave" scale="18" xChannelSelector="R" yChannelSelector="G" />
+                      </filter>
+                    ))}
+                  </defs>
+                </svg>
+
                 <AnimatePresence>
-                  {fallingBills.map(bill => (
-                    <motion.div
-                      key={bill.id}
-                      initial={{ y: -200, x: 0, rotate: bill.initRot, rotateY: 0, rotateX: 0, opacity: 0 }}
-                      animate={{
-                        y: typeof window !== 'undefined' ? window.innerHeight + 200 : 1000,
-                        x: [0, bill.swayAmp, -bill.swayAmp, bill.swayAmp, -bill.swayAmp, bill.swayAmp, 0],
-                        rotate: [bill.initRot, bill.initRot + 180, bill.initRot + 360],
-                        rotateY: [0, 360, 720],
-                        rotateX: [0, 90, 180, 270, 360],
-                        opacity: [0, 1, 1, 1, 0]
-                      }}
-                      exit={{ opacity: 0 }}
-                      transition={{
-                        y: { duration: bill.fallDuration, ease: "linear" },
-                        x: { duration: bill.fallDuration, ease: "easeInOut" },
-                        rotate: { duration: bill.fallDuration, ease: "easeInOut" },
-                        rotateY: { duration: bill.fallDuration, ease: "easeInOut" },
-                        rotateX: { duration: bill.fallDuration, ease: "easeInOut" },
-                        opacity: { duration: bill.fallDuration, ease: "linear", times: [0, 0.1, 0.8, 0.9, 1] }
-                      }}
-                      className="absolute w-[120px] md:w-[160px] h-[50px] md:h-[67px] pointer-events-none"
-                      style={{ 
-                        left: bill.startX, 
-                        translateX: '-50%',
-                        transformStyle: 'preserve-3d',
-                        display: 'flex'
-                      }}
-                    >
-                      {/* Left Segment */}
+                  {fallingBills.map(bill => {
+                    const filterId = `bill-wave-${bill.id % 10}`;
+                    return (
                       <motion.div
+                        key={bill.id}
+                        initial={{ y: -200, x: 0, rotate: bill.initRot, opacity: 0 }}
                         animate={{
-                          rotateY: [-30, 30, -30, 30, -30]
+                          y: typeof window !== 'undefined' ? window.innerHeight + 200 : 1000,
+                          x: [0, bill.swayAmp, -bill.swayAmp * 0.7, bill.swayAmp * 0.5, -bill.swayAmp, 0],
+                          rotate: [bill.initRot, bill.initRot + 90, bill.initRot + 180, bill.initRot + 270, bill.initRot + 360],
+                          opacity: [0, 1, 1, 1, 0]
                         }}
+                        exit={{ opacity: 0 }}
                         transition={{
-                          duration: bill.fallDuration,
-                          ease: "easeInOut"
+                          y: { duration: bill.fallDuration, ease: "linear" },
+                          x: { duration: bill.fallDuration, ease: "easeInOut" },
+                          rotate: { duration: bill.fallDuration, ease: "linear" },
+                          opacity: { duration: bill.fallDuration, ease: "linear", times: [0, 0.08, 0.8, 0.92, 1] }
                         }}
-                        style={{
-                          width: '33.33%',
-                          height: '100%',
-                          backgroundImage: `url(${bill.type}.webp)`,
-                          backgroundSize: '300% 100%',
-                          backgroundPosition: '0% 0%',
-                          backgroundRepeat: 'no-repeat',
-                          transformOrigin: 'right center',
-                          transformStyle: 'preserve-3d',
-                          borderTopLeftRadius: '2px',
-                          borderBottomLeftRadius: '2px',
-                          filter: 'drop-shadow(0 10px 15px rgba(0,0,0,0.15))'
-                        }}
-                      />
-
-                      {/* Center Segment */}
-                      <div
-                        style={{
-                          width: '33.34%',
-                          height: '100%',
-                          backgroundImage: `url(${bill.type}.webp)`,
-                          backgroundSize: '300% 100%',
-                          backgroundPosition: '50% 0%',
-                          backgroundRepeat: 'no-repeat',
-                          transformStyle: 'preserve-3d',
-                          filter: 'drop-shadow(0 10px 15px rgba(0,0,0,0.15))'
-                        }}
-                      />
-
-                      {/* Right Segment */}
-                      <motion.div
-                        animate={{
-                          rotateY: [30, -30, 30, -30, 30]
-                        }}
-                        transition={{
-                          duration: bill.fallDuration,
-                          ease: "easeInOut"
-                        }}
-                        style={{
-                          width: '33.33%',
-                          height: '100%',
-                          backgroundImage: `url(${bill.type}.webp)`,
-                          backgroundSize: '300% 100%',
-                          backgroundPosition: '100% 0%',
-                          backgroundRepeat: 'no-repeat',
-                          transformOrigin: 'left center',
-                          transformStyle: 'preserve-3d',
-                          borderTopRightRadius: '2px',
-                          borderBottomRightRadius: '2px',
-                          filter: 'drop-shadow(0 10px 15px rgba(0,0,0,0.15))'
-                        }}
-                      />
-                    </motion.div>
-                  ))}
+                        className="absolute pointer-events-none"
+                        style={{ left: bill.startX, translateX: '-50%' }}
+                      >
+                        <img
+                          src={`${bill.type}.webp`}
+                          alt=""
+                          draggable={false}
+                          style={{
+                            width: '160px',
+                            height: 'auto',
+                            display: 'block',
+                            filter: `url(#${filterId}) drop-shadow(0 12px 20px rgba(0,0,0,0.25))`,
+                            borderRadius: '3px',
+                          }}
+                        />
+                      </motion.div>
+                    );
+                  })}
                 </AnimatePresence>
               </div>
 
