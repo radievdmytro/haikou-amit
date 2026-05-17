@@ -1653,28 +1653,22 @@ export default function App() {
                 <svg width="0" height="0" style={{ position: 'absolute' }}>
                   <defs>
                     {[0,1,2,3,4,5,6,7,8,9].map(i => (
-                      <filter key={i} id={`bill-wave-${i}`} x="-10%" y="-10%" width="120%" height="120%">
+                      <filter key={i} id={`bill-wave-${i}`} x="-5%" y="-5%" width="110%" height="110%">
                         <feTurbulence
-                          type="sinusoid"
-                          baseFrequency="0.04 0.0"
-                          numOctaves="2"
+                          type="fractalNoise"
+                          baseFrequency="0.012 0.0"
+                          numOctaves="1"
                           result="wave"
                           seed={i + 1}
                         >
                           <animate
                             attributeName="baseFrequency"
-                            values="0.02 0.0;0.06 0.01;0.02 0.0"
-                            dur={`${1.2 + i * 0.15}s`}
-                            repeatCount="indefinite"
-                          />
-                          <animate
-                            attributeName="seed"
-                            values={`${i + 1};${i + 5};${i + 1}`}
-                            dur={`${2.5 + i * 0.2}s`}
+                            values={`${0.008 + i * 0.001} 0.0;${0.015 + i * 0.001} 0.0;${0.008 + i * 0.001} 0.0`}
+                            dur={`${2.0 + i * 0.3}s`}
                             repeatCount="indefinite"
                           />
                         </feTurbulence>
-                        <feDisplacementMap in="SourceGraphic" in2="wave" scale="18" xChannelSelector="R" yChannelSelector="G" />
+                        <feDisplacementMap in="SourceGraphic" in2="wave" scale="6" xChannelSelector="R" yChannelSelector="G" />
                       </filter>
                     ))}
                   </defs>
