@@ -1095,7 +1095,7 @@ export default function App() {
                 className="absolute inset-0 z-0 pointer-events-auto"
                 onClick={handleHeroBgClick}
               >
-                <img src="hero_bg.png" alt="Map" className="w-full h-full object-cover" />
+                <img src="hero_bg.webp" alt="Map" className="w-full h-full object-cover" />
               </motion.div>
 
               <AnimatePresence>
@@ -1122,7 +1122,7 @@ export default function App() {
                       times: [0, 0.45, 0.65, 1],
                       ease: ["easeIn", "easeOut", "easeIn"]
                     }}
-                    src={containerDropData.index === 1 ? "container_3d.png" : `container_3d_${containerDropData.index}.png`}
+                    src={containerDropData.index === 1 ? "container_3d.webp" : `container_3d_${containerDropData.index}.webp`}
                     className="absolute top-0 z-[100] w-64 lg:w-96 object-contain pointer-events-none"
                     style={{ left: containerDropData.startX, x: '-50%' }}
                   />
@@ -1259,8 +1259,8 @@ export default function App() {
                 style={{ y: bgY }}
                 className="absolute inset-0 z-0 opacity-10"
               >
-                <img src="warehouse.png" loading="lazy" alt="" className="absolute top-0 left-0 w-full h-[120%] object-cover scale-110" />
-                <img src="warehouse_must.png" loading="lazy" alt="" className={`absolute top-0 left-0 w-full h-[120%] object-cover scale-110 transition-opacity duration-1000 ${warehouseState.showMust ? 'opacity-100' : 'opacity-0'}`} />
+                <img src="warehouse.webp" loading="lazy" alt="" className="absolute top-0 left-0 w-full h-[120%] object-cover scale-110" />
+                <img src="warehouse_must.webp" loading="lazy" alt="" className={`absolute top-0 left-0 w-full h-[120%] object-cover scale-110 transition-opacity duration-1000 ${warehouseState.showMust ? 'opacity-100' : 'opacity-0'}`} />
               </motion.div>
 
               <div className="container mx-auto px-6 lg:px-16 xl:px-40 relative z-10 flex flex-col lg:flex-row items-center justify-center gap-24 py-32" style={{ perspective: "2000px" }}>
@@ -1278,14 +1278,14 @@ export default function App() {
                   >
                     <div className="absolute -inset-10 bg-gold/5 blur-3xl rounded-full" />
                     <img
-                      src="warehouse.png"
+                      src="warehouse.webp"
                       loading="lazy"
                       alt="Warehouse"
                       className="relative z-10 rounded-[2.5rem] shadow-[0_50px_100px_rgba(0,0,0,0.3)] w-full object-cover aspect-square"
                       style={{ backfaceVisibility: "hidden" }}
                     />
                     <img
-                      src="warehouse_must.png"
+                      src="warehouse_must.webp"
                       loading="lazy"
                       alt="Warehouse Secret"
                       className={`absolute top-0 left-0 z-20 rounded-[2.5rem] shadow-[0_50px_100px_rgba(0,0,0,0.3)] w-full h-full object-cover aspect-square transition-opacity duration-1000 ${warehouseState.showMust ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
@@ -1417,7 +1417,7 @@ export default function App() {
                   <div className="relative" style={{ transformStyle: "preserve-3d" }}>
                     <div className="absolute -inset-10 bg-[#C9A84C]/5 rounded-[4rem] blur-3xl" />
                     <img
-                      src="office.jpg"
+                      src="office.webp"
                       loading="lazy"
                       alt="Office"
                       className="relative z-10 rounded-[3rem] shadow-[0_50px_100px_rgba(0,0,0,0.2)] w-full object-cover aspect-[3/2]"
@@ -1475,7 +1475,7 @@ export default function App() {
                       </div>
                       <div className="relative overflow-hidden bg-white">
                         <motion.div style={{ opacity: imgOpacity }}>
-                          <img src="site.png" loading="lazy" alt="Platform" className="w-full h-auto block" />
+                          <img src="site.webp" loading="lazy" alt="Platform" className="w-full h-auto block" />
                         </motion.div>
                         <motion.div
                           style={{ opacity: placeholderOpacity }}
@@ -1570,7 +1570,7 @@ export default function App() {
                     <div className="relative overflow-hidden bg-white">
                       <motion.div style={{ opacity: imgOpacity }}>
                         <img
-                          src="site.png"
+                          src="site.webp"
                           loading="lazy"
                           alt="Platform"
                           className="w-full h-auto block"
@@ -1691,7 +1691,7 @@ export default function App() {
           const textX = useTransform(progress, [0.05, isMobile ? 0.42 : 0.4], [-50, 0], { ease: t => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2 });
           return (
             <div className="relative min-h-screen flex items-center bg-[#1A1A1A] overflow-hidden">
-              <img src="port_constanta.png" loading="lazy" className="absolute inset-0 w-full h-full object-cover opacity-5 mix-blend-luminosity" alt="Port" />
+              <img src="port_constanta.webp" loading="lazy" className="absolute inset-0 w-full h-full object-cover opacity-5 mix-blend-luminosity" alt="Port" />
 
               <div className="container mx-auto px-6 lg:px-16 xl:px-40 relative z-10 flex flex-col lg:flex-row items-center justify-center gap-20 max-w-6xl">
                 {/* Left Side: Text */}
@@ -2092,7 +2092,7 @@ const CertificateSectionContent = ({ progress }: { progress: any }) => {
           >
             {/* Front Face (Certificate Image) */}
             <div className="absolute inset-0 backface-hidden z-10 [transform:rotateY(0deg)]">
-              <img src="cert.JPG" loading="lazy" className="w-full h-full object-cover rounded-[1.5rem] shadow-2xl border-[6px] border-white" alt="Cert" />
+              <img src="cert.webp" loading="lazy" className="w-full h-full object-cover rounded-[1.5rem] shadow-2xl border-[6px] border-white" alt="Cert" />
             </div>
 
             {/* Back Face (Golden Jacket) */}
