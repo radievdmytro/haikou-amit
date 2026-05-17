@@ -1652,13 +1652,15 @@ export default function App() {
                   {fallingBills.map(bill => (
                     <motion.img
                       key={bill.id}
-                      initial={{ y: -200, x: 0, rotate: bill.initRot, rotateY: 0, rotateX: 0, opacity: 0 }}
+                      initial={{ y: -200, x: 0, rotate: bill.initRot, rotateY: 0, rotateX: 0, skewX: 0, skewY: 0, opacity: 0 }}
                       animate={{
                         y: typeof window !== 'undefined' ? window.innerHeight + 200 : 1000,
                         x: [0, bill.swayAmp, -bill.swayAmp, bill.swayAmp, -bill.swayAmp, bill.swayAmp, 0],
                         rotate: [bill.initRot, bill.initRot + 360, bill.initRot + 720],
                         rotateY: [0, 360, 720, 1080],
                         rotateX: [0, 180, 360, 540],
+                        skewX: [0, -15, 15, -15, 15, -15, 0],
+                        skewY: [0, 5, -5, 5, -5, 5, 0],
                         opacity: [0, 1, 1, 1, 0]
                       }}
                       exit={{ opacity: 0 }}
@@ -1668,6 +1670,8 @@ export default function App() {
                         rotate: { duration: bill.fallDuration, ease: "easeInOut" },
                         rotateY: { duration: bill.fallDuration, ease: "easeInOut" },
                         rotateX: { duration: bill.fallDuration, ease: "easeInOut" },
+                        skewX: { duration: bill.fallDuration, ease: "easeInOut" },
+                        skewY: { duration: bill.fallDuration, ease: "easeInOut" },
                         opacity: { duration: bill.fallDuration, ease: "linear", times: [0, 0.1, 0.8, 0.9, 1] }
                       }}
                       src={`${bill.type}.webp`}
