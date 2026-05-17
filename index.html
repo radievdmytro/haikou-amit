@@ -23,9 +23,87 @@
     <meta property="twitter:title" content="Haikou Amit Import and Export Trading Co., Ltd" />
     <meta property="twitter:description" content="Connect directly with our global supply chain through our advanced digital marketplace. Explore franchise and investment opportunities." />
     <meta property="twitter:image" content="https://radievdmytro.github.io/haikou-amit/office.jpg" />
+
+    <style>
+      /* Luxury Brand Loader Splash Screen */
+      #initial-loader {
+        position: fixed;
+        inset: 0;
+        background-color: #FAFAF7;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        font-family: system-ui, -apple-system, sans-serif;
+      }
+      .loader-logo-wrap {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 24px;
+      }
+      .loader-ring {
+        width: 64px;
+        height: 64px;
+        border: 2px solid rgba(201, 168, 76, 0.1);
+        border-top: 2px solid #C9A84C;
+        border-radius: 50%;
+        animation: spin 1s cubic-bezier(0.25, 1, 0.5, 1) infinite;
+      }
+      .loader-inner-dot {
+        position: absolute;
+        width: 12px;
+        height: 12px;
+        background-color: #C9A84C;
+        border-radius: 50%;
+        animation: pulse 1.5s ease-in-out infinite;
+      }
+      .loader-brand {
+        font-size: 24px;
+        font-weight: 700;
+        letter-spacing: 0.15em;
+        color: #1A1A1A;
+        margin: 0 0 6px 0;
+        text-align: center;
+        animation: fadeIn 0.8s ease-out forwards;
+      }
+      .loader-sub {
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.25em;
+        color: #9A7A2C;
+        text-transform: uppercase;
+        margin: 0;
+        text-align: center;
+        animation: fadeIn 1.2s ease-out forwards;
+      }
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+      @keyframes pulse {
+        0%, 100% { transform: scale(0.8); opacity: 0.5; }
+        50% { transform: scale(1.2); opacity: 1; }
+      }
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+    </style>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <div id="initial-loader">
+        <div class="loader-logo-wrap">
+          <div class="loader-ring"></div>
+          <div class="loader-inner-dot"></div>
+        </div>
+        <h1 class="loader-brand">HAIKOU AMIT</h1>
+        <p class="loader-sub">Import & Export</p>
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
