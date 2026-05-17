@@ -866,6 +866,7 @@ export default function App() {
     initRot: number;
     swayAmp: number;
     fallDuration: number;
+    xFlips: number;   // 0 = flutter only, 1 = one full long-axis flip, 2 = two flips
   }>>([]);
   const billIdCounter = React.useRef(0);
 
@@ -879,6 +880,9 @@ export default function App() {
         const initRot = Math.floor(Math.random() * 360);
         const swayAmp = 40 + Math.random() * 60;
         const fallDuration = 4 + Math.random() * 3;
+        // 40% no flip, 40% one full flip, 20% two flips
+        const rng = Math.random();
+        const xFlips = rng < 0.4 ? 0 : rng < 0.8 ? 1 : 2;
 
         const newBill = {
           id: billIdCounter.current++,
@@ -886,7 +890,8 @@ export default function App() {
           startX,
           initRot,
           swayAmp,
-          fallDuration
+          fallDuration,
+          xFlips
         };
 
         setFallingBills(prevBills => [...prevBills, newBill]);
@@ -1213,8 +1218,19 @@ export default function App() {
                     (bill.initRot % 100) - 10,
                     (bill.initRot % 100) - 30
                   ],
-                  /* rotateX: forward/back flutter */
-                  rotateX: [0, -18, 12, -25, 8, -14, 0],
+                  /* rotateX: flutter only OR full long-axis flip(s) depending on xFlips */
+                  rotateX: bill.xFlips === 0
+                    // No flip: natural oscillation (forward/back flutter)
+                    ? [0, -18, 12, -25, 8, -14, 0]
+                    // With flip(s): oscillate a bit, then spin full 360° per flip, settle
+                    : [
+                        0,
+                        -15,
+                        360 * bill.xFlips * 0.35,
+                        360 * bill.xFlips * 0.65,
+                        360 * bill.xFlips - 10,
+                        360 * bill.xFlips
+                      ],
                   /* rotateZ: slow orientation drift */
                   rotateZ: [
                     (bill.initRot % 30) - 15,
