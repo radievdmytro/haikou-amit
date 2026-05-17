@@ -1445,11 +1445,11 @@ export default function App() {
                   </motion.div>
                 </div>
 
-                <p className="text-lg text-mid mb-0 lg:mb-12 leading-relaxed max-w-lg">
+                <p className="text-lg text-mid mb-6 lg:mb-12 leading-relaxed max-w-lg">
                   Connect directly with our global supply chain through our advanced digital marketplace.
                 </p>
 
-                <div className="flex flex-col items-center lg:items-start gap-0 lg:gap-10 -mt-8 lg:mt-0">
+                <div className="flex flex-col items-center lg:items-start gap-0 lg:gap-10 mt-4 lg:mt-0">
                   <div className="h-[80px] flex items-center justify-center lg:justify-start w-full lg:w-auto relative">
                     {/* State 1: Start Partnership */}
                     <div
