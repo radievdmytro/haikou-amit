@@ -769,6 +769,98 @@ const SectionTimeline = () => {
   );
 };
 
+// --- Falling Bill Canvas – Physics-based paper flutter ---
+function FallingBillCanvas({ src, phaseOffset }: { src: string; phaseOffset: number }) {
+  const canvasRef = React.useRef<HTMLCanvasElement>(null);
+  const animRef   = React.useRef<number>(0);
+  const imgRef    = React.useRef<HTMLImageElement | null>(null);
+
+  React.useEffect(() => {
+    const img = new window.Image();
+    img.src = src;
+    img.onload = () => { imgRef.current = img; };
+    return () => { img.onload = null; };
+  }, [src]);
+
+  React.useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const W       = 180;          // bill width px
+    const H       = Math.round(W / 2.35);  // bill height px (~76px)
+    const PAD     = 28;           // vertical padding for bend room
+    const STRIPS  = 20;           // more strips = smoother curve
+    const t0      = Date.now();
+
+    canvas.width  = W;
+    canvas.height = H + PAD * 2;
+
+    // Multi-frequency bend — mimics real air turbulence:
+    //  f1 = primary flutter (fast, dominant)
+    //  f2 = secondary harmonic (medium)
+    //  f3 = slow arching (like gravity-induced sag)
+    const bendAt = (px: number, t: number) => {
+      const p = px / W;  // 0..1 across bill width
+      const f1 = Math.sin(p * Math.PI * 2.2 + t * 2.4 + phaseOffset)          * 11;
+      const f2 = Math.sin(p * Math.PI * 4.1 + t * 3.8 + phaseOffset * 1.7)   * 4;
+      const f3 = Math.sin(p * Math.PI * 1.0 + t * 1.1 + phaseOffset * 0.5)   * 7;
+      // Edge curl: edges always bend slightly more than center (paper physics)
+      const edgeCurl = Math.sin(p * Math.PI) * -4; // negative = edges bow outward
+      return f1 + f2 + f3 + edgeCurl;
+    };
+
+    const draw = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const img = imgRef.current;
+      if (img) {
+        const t        = (Date.now() - t0) / 1000;
+        const stripW   = W / STRIPS;
+        const imgW     = img.naturalWidth;
+        const imgH     = img.naturalHeight;
+
+        for (let s = 0; s < STRIPS; s++) {
+          const xL    = s * stripW;
+          const xR    = xL + stripW;
+          const bendL = bendAt(xL, t);
+          const bendR = bendAt(xR, t);
+
+          ctx.save();
+          // Clip to the parallelogram this strip occupies in screen space
+          ctx.beginPath();
+          ctx.moveTo(xL, PAD + bendL);
+          ctx.lineTo(xR, PAD + bendR);
+          ctx.lineTo(xR, PAD + bendR + H);
+          ctx.lineTo(xL, PAD + bendL + H);
+          ctx.closePath();
+          ctx.clip();
+
+          // Shear transform: maps local (0,0) → screen (xL, PAD+bendL)
+          // with horizontal shear = (bendR-bendL)/stripW per pixel of Y travel
+          ctx.setTransform(1, (bendR - bendL) / stripW, 0, 1, xL, PAD + bendL);
+
+          // Draw only the slice of the source image for this strip
+          const sx = (s / STRIPS) * imgW;
+          const sw = imgW / STRIPS;
+          ctx.drawImage(img, sx, 0, sw, imgH, 0, 0, stripW, H);
+
+          ctx.restore();
+        }
+
+        // Subtle drop shadow pass (reuse canvas as source)
+        // — handled via CSS filter on the canvas wrapper
+      }
+      animRef.current = requestAnimationFrame(draw);
+    };
+
+    animRef.current = requestAnimationFrame(draw);
+    return () => cancelAnimationFrame(animRef.current);
+  }, [src, phaseOffset]);
+
+  return <canvas ref={canvasRef} style={{ display: 'block', pointerEvents: 'none' }} />;
+}
+
 // --- Main App ---
 
 export default function App() {
@@ -1645,73 +1737,55 @@ export default function App() {
                 className="absolute inset-0 z-0 cursor-default pointer-events-auto" 
                 onClick={handleFranchiseClick}
               />
-              {/* Falling Banknotes Overlay */}
-              <div 
-                className="absolute inset-0 pointer-events-none z-30 overflow-hidden"
-              >
-                {/* Hidden SVG Filters – one per possible bill, each with its own animated seed */}
-                <svg width="0" height="0" style={{ position: 'absolute' }}>
-                  <defs>
-                    {[0,1,2,3,4,5,6,7,8,9].map(i => (
-                      <filter key={i} id={`bill-wave-${i}`} x="-5%" y="-5%" width="110%" height="110%">
-                        <feTurbulence
-                          type="fractalNoise"
-                          baseFrequency="0.012 0.0"
-                          numOctaves="1"
-                          result="wave"
-                          seed={i + 1}
-                        >
-                          <animate
-                            attributeName="baseFrequency"
-                            values={`${0.008 + i * 0.001} 0.0;${0.015 + i * 0.001} 0.0;${0.008 + i * 0.001} 0.0`}
-                            dur={`${2.0 + i * 0.3}s`}
-                            repeatCount="indefinite"
-                          />
-                        </feTurbulence>
-                        <feDisplacementMap in="SourceGraphic" in2="wave" scale="6" xChannelSelector="R" yChannelSelector="G" />
-                      </filter>
-                    ))}
-                  </defs>
-                </svg>
-
+              {/* Falling Banknotes Overlay – Canvas physics */}
+              <div className="absolute inset-0 pointer-events-none z-30 overflow-hidden">
                 <AnimatePresence>
-                  {fallingBills.map(bill => {
-                    const filterId = `bill-wave-${bill.id % 10}`;
-                    return (
-                      <motion.div
-                        key={bill.id}
-                        initial={{ y: -200, x: 0, rotate: bill.initRot, opacity: 0 }}
-                        animate={{
-                          y: typeof window !== 'undefined' ? window.innerHeight + 200 : 1000,
-                          x: [0, bill.swayAmp, -bill.swayAmp * 0.7, bill.swayAmp * 0.5, -bill.swayAmp, 0],
-                          rotate: [bill.initRot, bill.initRot + 90, bill.initRot + 180, bill.initRot + 270, bill.initRot + 360],
-                          opacity: [0, 1, 1, 1, 0]
-                        }}
-                        exit={{ opacity: 0 }}
-                        transition={{
-                          y: { duration: bill.fallDuration, ease: "linear" },
-                          x: { duration: bill.fallDuration, ease: "easeInOut" },
-                          rotate: { duration: bill.fallDuration, ease: "linear" },
-                          opacity: { duration: bill.fallDuration, ease: "linear", times: [0, 0.08, 0.8, 0.92, 1] }
-                        }}
-                        className="absolute pointer-events-none"
-                        style={{ left: bill.startX, translateX: '-50%' }}
-                      >
-                        <img
-                          src={`${bill.type}.webp`}
-                          alt=""
-                          draggable={false}
-                          style={{
-                            width: '160px',
-                            height: 'auto',
-                            display: 'block',
-                            filter: `url(#${filterId}) drop-shadow(0 12px 20px rgba(0,0,0,0.25))`,
-                            borderRadius: '3px',
-                          }}
-                        />
-                      </motion.div>
-                    );
-                  })}
+                  {fallingBills.map(bill => (
+                    <motion.div
+                      key={bill.id}
+                      initial={{ y: -220, x: 0, rotate: bill.initRot, opacity: 0 }}
+                      animate={{
+                        y: typeof window !== 'undefined' ? window.innerHeight + 220 : 1100,
+                        x: [
+                          0,
+                          bill.swayAmp * 0.8,
+                          -bill.swayAmp * 0.6,
+                          bill.swayAmp,
+                          -bill.swayAmp * 0.4,
+                          bill.swayAmp * 0.5,
+                          0
+                        ],
+                        rotate: [
+                          bill.initRot,
+                          bill.initRot + 25,
+                          bill.initRot - 15,
+                          bill.initRot + 40,
+                          bill.initRot - 10,
+                          bill.initRot + 30,
+                          bill.initRot
+                        ],
+                        opacity: [0, 1, 1, 1, 0]
+                      }}
+                      exit={{ opacity: 0 }}
+                      transition={{
+                        y:       { duration: bill.fallDuration, ease: 'linear' },
+                        x:       { duration: bill.fallDuration, ease: 'easeInOut' },
+                        rotate:  { duration: bill.fallDuration, ease: 'easeInOut' },
+                        opacity: { duration: bill.fallDuration, ease: 'linear', times: [0, 0.07, 0.85, 0.93, 1] }
+                      }}
+                      className="absolute pointer-events-none"
+                      style={{
+                        left: bill.startX,
+                        translateX: '-50%',
+                        filter: 'drop-shadow(0 14px 22px rgba(0,0,0,0.22))'
+                      }}
+                    >
+                      <FallingBillCanvas
+                        src={`${bill.type}.webp`}
+                        phaseOffset={bill.id * 1.3}
+                      />
+                    </motion.div>
+                  ))}
                 </AnimatePresence>
               </div>
 
