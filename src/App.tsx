@@ -1282,14 +1282,14 @@ export default function App() {
                       loading="lazy"
                       alt="Warehouse"
                       className="relative z-10 rounded-[2.5rem] shadow-[0_50px_100px_rgba(0,0,0,0.3)] w-full object-cover aspect-square"
-                      style={{ backfaceVisibility: "hidden" }}
+                      style={{ backfaceVisibility: "hidden", aspectRatio: "1 / 1" }}
                     />
                     <img
                       src="warehouse_must.webp"
                       loading="lazy"
                       alt="Warehouse Secret"
                       className={`absolute top-0 left-0 z-20 rounded-[2.5rem] shadow-[0_50px_100px_rgba(0,0,0,0.3)] w-full h-full object-cover aspect-square transition-opacity duration-1000 ${warehouseState.showMust ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
-                      style={{ backfaceVisibility: "hidden" }}
+                      style={{ backfaceVisibility: "hidden", aspectRatio: "1 / 1" }}
                     />
                   </div>
                 </TiltCard>
@@ -1421,7 +1421,7 @@ export default function App() {
                       loading="lazy"
                       alt="Office"
                       className="relative z-10 rounded-[3rem] shadow-[0_50px_100px_rgba(0,0,0,0.2)] w-full object-cover aspect-[3/2]"
-                      style={{ backfaceVisibility: "hidden" }}
+                      style={{ backfaceVisibility: "hidden", aspectRatio: "3 / 2" }}
                     />
                   </div>
                 </motion.div>
@@ -2092,7 +2092,7 @@ const CertificateSectionContent = ({ progress }: { progress: any }) => {
           >
             {/* Front Face (Certificate Image) */}
             <div className="absolute inset-0 backface-hidden z-10 [transform:rotateY(0deg)]">
-              <img src="cert.webp" loading="lazy" className="w-full h-full object-cover rounded-[1.5rem] shadow-2xl border-[6px] border-white" alt="Cert" />
+              <img src="cert.webp" loading="lazy" className="w-full h-full object-cover rounded-[1.5rem] shadow-2xl border-[6px] border-white" alt="Cert" style={{ aspectRatio: "1.58 / 1" }} />
             </div>
 
             {/* Back Face (Golden Jacket) */}
