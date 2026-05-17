@@ -861,8 +861,10 @@ export default function App() {
     startX: string;
     initRot: number;
     endRot: number;
+    fallDuration: number;
   }>>([]);
   const containerIdCounter = React.useRef(0);
+  const lastContainerIndexRef = React.useRef(0);
 
   const [franchiseClicks, setFranchiseClicks] = React.useState(0);
   const [fallingBills, setFallingBills] = React.useState<Array<{
@@ -954,17 +956,25 @@ export default function App() {
 
   const triggerContainerDrop = React.useCallback(() => {
     const newId = containerIdCounter.current++;
-    const newIndex = Math.floor(Math.random() * 3) + 1;
+    
+    // Ensure index is always different from the last triggered one
+    let newIndex = Math.floor(Math.random() * 3) + 1;
+    if (newIndex === lastContainerIndexRef.current) {
+      newIndex = (newIndex % 3) + 1;
+    }
+    lastContainerIndexRef.current = newIndex;
+
     const startX = Math.floor(Math.random() * 70 + 15) + '%';
     const initRot = Math.floor(Math.random() * 180) - 90;
     const endRot = initRot + (Math.floor(Math.random() * 540) + 180) * (Math.random() > 0.5 ? 1 : -1);
+    const fallDuration = 3.2 + Math.random() * 1.6; // random duration between 3.2s and 4.8s
 
-    const newContainer = { id: newId, index: newIndex, startX, initRot, endRot };
+    const newContainer = { id: newId, index: newIndex, startX, initRot, endRot, fallDuration };
 
     setFallingContainers(prev => [...prev, newContainer]);
     setTimeout(() => {
       setFallingContainers(prev => prev.filter(c => c.id !== newId));
-    }, 4500);
+    }, Math.ceil(fallDuration * 1000) + 200);
   }, []);
 
   const handleHeroBgClick = () => {
@@ -1352,7 +1362,7 @@ export default function App() {
                     }}
                     exit={{ opacity: 0 }}
                     transition={{
-                      duration: 4,
+                      duration: container.fallDuration,
                       times: [0, 0.45, 0.65, 1],
                       ease: ["easeIn", "easeOut", "easeIn"]
                     }}
