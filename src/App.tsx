@@ -1471,14 +1471,14 @@ export default function App() {
                       <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 items-center w-full sm:w-auto justify-center lg:justify-start">
                         <AttentionButton
                           onClick={(e) => scrollToSection(e as any, 'franchise')}
-                          className="px-16 py-2 sm:py-7 bg-gold text-white rounded-full font-bold text-[11px] uppercase tracking-[0.25em] shadow-2xl shadow-gold/20 hover:scale-105 transition-all cursor-pointer flex items-center gap-3 group min-w-[320px] justify-center"
+                          className="px-16 py-2 sm:py-7 bg-gold text-white rounded-full font-bold text-[11px] uppercase tracking-[0.25em] shadow-2xl shadow-gold/20 hover:scale-105 transition-all cursor-pointer flex items-center gap-3 group min-w-[320px] justify-center whitespace-nowrap"
                         >
                           Explore Franchise
                           <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
                         </AttentionButton>
                         <AttentionButton
                           onClick={(e) => scrollToSection(e as any, 'investment')}
-                          className="px-16 py-2 sm:py-7 bg-gold text-white rounded-full font-bold text-[11px] uppercase tracking-[0.25em] shadow-2xl shadow-gold/20 hover:scale-105 transition-all cursor-pointer flex items-center gap-3 group min-w-[320px] justify-center"
+                          className="px-16 py-2 sm:py-7 bg-gold text-white rounded-full font-bold text-[11px] uppercase tracking-[0.25em] shadow-2xl shadow-gold/20 hover:scale-105 transition-all cursor-pointer flex items-center gap-3 group min-w-[320px] justify-center whitespace-nowrap"
                         >
                           Investment Offering
                           <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
