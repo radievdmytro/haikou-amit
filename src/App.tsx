@@ -1642,7 +1642,7 @@ export default function App() {
             <div className="relative w-full h-full min-h-screen">
               {/* Clickable Background Layer (Easter Egg Trigger) */}
               <div 
-                className="absolute inset-0 z-0 cursor-pointer pointer-events-auto" 
+                className="absolute inset-0 z-0 cursor-default pointer-events-auto" 
                 onClick={handleFranchiseClick}
               />
 
