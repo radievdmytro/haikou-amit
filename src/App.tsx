@@ -1449,43 +1449,57 @@ export default function App() {
                   Connect directly with our global supply chain through our advanced digital marketplace.
                 </p>
 
-                <div className="flex flex-col items-center lg:items-start gap-0 lg:gap-10 -mt-8 lg:mt-0">
-                  <div className="h-[200px] sm:h-[80px] flex items-center justify-center lg:justify-start w-full lg:w-auto relative">
-                    {/* State 1: Start Partnership */}
-                    <div
-                      className={`transition-all duration-500 absolute inset-0 flex items-center justify-center lg:justify-start ${!isPartnershipExpanded ? 'opacity-100 scale-100 pointer-events-auto' : 'opacity-0 scale-95 pointer-events-none'}`}
-                    >
-                      <button
-                        onClick={() => setIsPartnershipExpanded(true)}
-                        className="px-16 py-7 bg-gold text-white rounded-full font-bold text-[11px] uppercase tracking-[0.25em] shadow-2xl shadow-gold/20 hover:scale-105 transition-all cursor-pointer flex items-center gap-3 group min-w-[320px] justify-center"
-                      >
-                        Start Partnership
-                        <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-                      </button>
-                    </div>
-
-                    {/* State 2: Choice */}
-                    <div
-                      className={`transition-all duration-500 delay-100 absolute inset-0 flex items-center justify-center lg:justify-start ${isPartnershipExpanded ? 'opacity-100 scale-100 pointer-events-auto' : 'opacity-0 scale-95 pointer-events-none'}`}
-                    >
-                      <div className="flex flex-col sm:flex-row gap-4 items-center w-full sm:w-auto justify-center lg:justify-start">
-                        <AttentionButton
-                          onClick={(e) => scrollToSection(e as any, 'franchise')}
-                          className="px-16 py-7 bg-gold text-white rounded-full font-bold text-[11px] uppercase tracking-[0.25em] shadow-2xl shadow-gold/20 hover:scale-105 transition-all cursor-pointer flex items-center gap-3 group min-w-[320px] justify-center"
+                <div className="flex flex-col items-center lg:items-start gap-8 lg:gap-10 -mt-8 lg:mt-0 w-full lg:w-auto">
+                  <motion.div 
+                    layout 
+                    transition={{ type: 'spring', stiffness: 200, damping: 25 }}
+                    className="flex flex-col items-center lg:items-start w-full lg:w-auto overflow-visible"
+                  >
+                    <AnimatePresence mode="wait">
+                      {!isPartnershipExpanded ? (
+                        <motion.div
+                          key="start"
+                          initial={{ opacity: 0, scale: 0.95 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          exit={{ opacity: 0, scale: 0.95 }}
+                          transition={{ duration: 0.2 }}
+                          className="flex justify-center lg:justify-start w-full"
                         >
-                          Explore Franchise
-                          <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-                        </AttentionButton>
-                        <AttentionButton
-                          onClick={(e) => scrollToSection(e as any, 'investment')}
-                          className="px-16 py-7 bg-gold text-white rounded-full font-bold text-[11px] uppercase tracking-[0.25em] shadow-2xl shadow-gold/20 hover:scale-105 transition-all cursor-pointer flex items-center gap-3 group min-w-[320px] justify-center"
+                          <button
+                            onClick={() => setIsPartnershipExpanded(true)}
+                            className="px-10 py-5 bg-gold text-white rounded-full font-bold text-[11px] uppercase tracking-[0.25em] shadow-2xl shadow-gold/20 hover:scale-105 active:scale-95 transition-all cursor-pointer flex items-center gap-3 group min-w-[280px] justify-center"
+                          >
+                            Start Partnership
+                            <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                          </button>
+                        </motion.div>
+                      ) : (
+                        <motion.div
+                          key="options"
+                          initial={{ opacity: 0, scale: 0.95 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          exit={{ opacity: 0, scale: 0.95 }}
+                          transition={{ duration: 0.2 }}
+                          className="flex flex-col sm:flex-row gap-4 items-center w-full sm:w-auto justify-center lg:justify-start"
                         >
-                          Investment Offering
-                          <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-                        </AttentionButton>
-                      </div>
-                    </div>
-                  </div>
+                          <AttentionButton
+                            onClick={(e) => scrollToSection(e as any, 'franchise')}
+                            className="px-10 py-5 bg-gold text-white rounded-full font-bold text-[11px] uppercase tracking-[0.25em] shadow-2xl shadow-gold/20 hover:scale-105 active:scale-95 transition-all cursor-pointer flex items-center gap-3 group min-w-[280px] justify-center"
+                          >
+                            Explore Franchise
+                            <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                          </AttentionButton>
+                          <AttentionButton
+                            onClick={(e) => scrollToSection(e as any, 'investment')}
+                            className="px-10 py-5 bg-gold text-white rounded-full font-bold text-[11px] uppercase tracking-[0.25em] shadow-2xl shadow-gold/20 hover:scale-105 active:scale-95 transition-all cursor-pointer flex items-center gap-3 group min-w-[280px] justify-center"
+                          >
+                            Investment Offering
+                            <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                          </AttentionButton>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </motion.div>
 
                   <button
                     onClick={() => window.open('https://ninhao.shop', '_blank')}
