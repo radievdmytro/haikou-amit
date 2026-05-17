@@ -1647,7 +1647,10 @@ export default function App() {
               />
 
               {/* Falling Banknotes Overlay */}
-              <div className="absolute inset-0 pointer-events-none z-30 overflow-hidden">
+              <div 
+                className="absolute inset-0 pointer-events-none z-30 overflow-hidden"
+                style={{ perspective: "1000px", transformStyle: "preserve-3d" }}
+              >
                 <AnimatePresence>
                   {fallingBills.map(bill => (
                     <motion.img
@@ -1676,8 +1679,13 @@ export default function App() {
                       }}
                       src={`${bill.type}.webp`}
                       alt="Banknote"
-                      className="absolute w-24 sm:w-32 md:w-36 h-auto object-contain pointer-events-none drop-shadow-[0_15px_25px_rgba(0,0,0,0.15)]"
-                      style={{ left: bill.startX, translateX: '-50%' }}
+                      className="absolute w-24 sm:w-32 md:w-36 h-auto object-contain pointer-events-none drop-shadow-[0_20px_35px_rgba(0,0,0,0.2)]"
+                      style={{ 
+                        left: bill.startX, 
+                        translateX: '-50%',
+                        transformStyle: 'preserve-3d',
+                        backfaceVisibility: 'visible'
+                      }}
                     />
                   ))}
                 </AnimatePresence>
