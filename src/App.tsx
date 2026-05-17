@@ -781,6 +781,45 @@ export default function App() {
   const [heroBgClicks, setHeroBgClicks] = React.useState(0);
   const [containerDropData, setContainerDropData] = React.useState({ show: false, index: 0, startX: '50%', initRot: -20, endRot: 45 });
 
+  // Contact Form State
+  const [contactName, setContactName] = React.useState('');
+  const [contactEmail, setContactEmail] = React.useState('');
+  const [contactMessage, setContactMessage] = React.useState('');
+  const [contactStatus, setContactStatus] = React.useState<'idle' | 'sending' | 'success' | 'error'>('idle');
+
+  const handleContactSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!contactName || !contactEmail || !contactMessage) {
+      return;
+    }
+    setContactStatus('sending');
+    try {
+      const response = await fetch("https://formsubmit.co/ajax/ceo@ninhao.shop", {
+        method: "POST",
+        headers: { 
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          name: contactName,
+          email: contactEmail,
+          message: contactMessage
+        })
+      });
+      const data = await response.json();
+      if (data.success === "true" || response.ok) {
+        setContactStatus('success');
+        setContactName('');
+        setContactEmail('');
+        setContactMessage('');
+      } else {
+        setContactStatus('error');
+      }
+    } catch (err) {
+      setContactStatus('error');
+    }
+  };
+
   const triggerContainerDrop = React.useCallback(() => {
     setContainerDropData(prevData => {
       let newIndex = Math.floor(Math.random() * 3) + 1;
@@ -1760,61 +1799,112 @@ export default function App() {
               </motion.div>
 
               <motion.div style={{ x: rightX, opacity }} className="lg:w-[500px] w-full max-w-[500px] -mt-[11px] lg:mt-0">
-                <div className="bg-[#242424] p-10 md:p-14 rounded-[3.5rem] border border-white/5 shadow-[0_50px_100px_rgba(0,0,0,0.4)]">
-                  <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
-                    <div>
-                      <input
-                        type="text"
-                        placeholder="NAME"
-                        className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-white placeholder:text-white/30 focus:outline-none focus:border-[#C9A84C]/50 transition-colors uppercase text-[11px] font-bold tracking-widest"
-                      />
-                    </div>
-
-                    <div>
-                      <input
-                        type="email"
-                        placeholder="EMAIL"
-                        className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-white placeholder:text-white/30 focus:outline-none focus:border-[#C9A84C]/50 transition-colors uppercase text-[11px] font-bold tracking-widest"
-                      />
-                    </div>
-
-                    <div>
-                      <textarea
-                        rows={4}
-                        placeholder="YOUR MESSAGE"
-                        className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-white placeholder:text-white/30 focus:outline-none focus:border-[#C9A84C]/50 transition-colors resize-none uppercase text-[11px] font-bold tracking-widest"
-                      />
-                    </div>
-
-                    <motion.button
-                      animate={{
-                        boxShadow: [
-                          "0 0 0 0px rgba(201, 168, 76, 0)",
-                          "0 0 20px 2px rgba(201, 168, 76, 0.3)",
-                          "0 0 0 0px rgba(201, 168, 76, 0)"
-                        ],
-                        scale: [1, 1.02, 1]
-                      }}
-                      whileHover={{
-                        boxShadow: "0 0 50px 15px rgba(255, 215, 0, 0.5), 0 0 20px 5px rgba(201, 168, 76, 0.8)",
-                        scale: 1.03
-                      }}
-                      transition={{
-                        duration: 3,
-                        repeat: Infinity,
-                        ease: "easeInOut"
-                      }}
-                      className="w-full py-6 bg-[#C9A84C] text-charcoal font-bold uppercase tracking-[0.3em] text-[11px] rounded-[2rem] transition-all duration-500 shadow-xl shadow-gold/10 mt-4 relative overflow-hidden group/btn cursor-pointer"
-                    >
-                      <span className="relative z-10">Send Inquiry</span>
-                      {/* Internal shimmering light sweep */}
+                <div className="bg-[#242424] p-10 md:p-14 rounded-[3.5rem] border border-white/5 shadow-[0_50px_100px_rgba(0,0,0,0.4)] min-h-[440px] flex items-center justify-center">
+                  <AnimatePresence mode="wait">
+                    {contactStatus === 'success' ? (
                       <motion.div
-                        animate={{ x: ["-100%", "200%"] }}
-                        transition={{ duration: 4, repeat: Infinity, ease: "linear", delay: 1 }}
-                        className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent skew-x-[-20deg]"
-                      />
-                    </motion.button>
-                  </form>
+                        key="success"
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.8 }}
+                        className="text-center space-y-5"
+                      >
+                        <div className="w-20 h-20 rounded-full border-2 border-[#C9A84C] flex items-center justify-center mx-auto shadow-[0_0_30px_rgba(201,168,76,0.3)]">
+                          <ShieldCheck className="text-[#C9A84C] animate-bounce" size={40} />
+                        </div>
+                        <h3 className="text-2xl font-bold text-white uppercase tracking-widest">Thank You!</h3>
+                        <p className="text-white/60 text-sm max-w-[280px] mx-auto font-light leading-relaxed">
+                          Your inquiry has been sent successfully. We will get back to you shortly.
+                        </p>
+                        <button
+                          onClick={() => setContactStatus('idle')}
+                          className="text-[10px] text-[#C9A84C] uppercase tracking-widest font-bold border border-[#C9A84C]/20 rounded-full px-6 py-2.5 hover:bg-[#C9A84C]/5 hover:border-[#C9A84C] transition-all mt-4 cursor-pointer"
+                        >
+                          Send Another Message
+                        </button>
+                      </motion.div>
+                    ) : (
+                      <motion.form
+                        key="form"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="space-y-4 w-full"
+                        onSubmit={handleContactSubmit}
+                      >
+                        <div>
+                          <input
+                            type="text"
+                            required
+                            value={contactName}
+                            onChange={(e) => setContactName(e.target.value)}
+                            placeholder="NAME"
+                            className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-white placeholder:text-white/30 focus:outline-none focus:border-[#C9A84C]/50 transition-colors uppercase text-[11px] font-bold tracking-widest"
+                          />
+                        </div>
+
+                        <div>
+                          <input
+                            type="email"
+                            required
+                            value={contactEmail}
+                            onChange={(e) => setContactEmail(e.target.value)}
+                            placeholder="EMAIL"
+                            className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-white placeholder:text-white/30 focus:outline-none focus:border-[#C9A84C]/50 transition-colors uppercase text-[11px] font-bold tracking-widest"
+                          />
+                        </div>
+
+                        <div>
+                          <textarea
+                            rows={4}
+                            required
+                            value={contactMessage}
+                            onChange={(e) => setContactMessage(e.target.value)}
+                            placeholder="YOUR MESSAGE"
+                            className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-white placeholder:text-white/30 focus:outline-none focus:border-[#C9A84C]/50 transition-colors resize-none uppercase text-[11px] font-bold tracking-widest"
+                          />
+                        </div>
+
+                        {contactStatus === 'error' && (
+                          <p className="text-red-400 text-[10px] text-center font-bold tracking-wider uppercase">
+                            Something went wrong. Please try again or email ceo@ninhao.shop directly.
+                          </p>
+                        )}
+
+                        <motion.button
+                          disabled={contactStatus === 'sending'}
+                          animate={contactStatus !== 'sending' ? {
+                            boxShadow: [
+                              "0 0 0 0px rgba(201, 168, 76, 0)",
+                              "0 0 20px 2px rgba(201, 168, 76, 0.3)",
+                              "0 0 0 0px rgba(201, 168, 76, 0)"
+                            ],
+                            scale: [1, 1.02, 1]
+                          } : {}}
+                          whileHover={contactStatus !== 'sending' ? {
+                            boxShadow: "0 0 50px 15px rgba(255, 215, 0, 0.5), 0 0 20px 5px rgba(201, 168, 76, 0.8)",
+                            scale: 1.03
+                          } : {}}
+                          transition={{
+                            duration: 3,
+                            repeat: Infinity,
+                            ease: "easeInOut"
+                          }}
+                          className="w-full py-6 bg-[#C9A84C] text-charcoal font-bold uppercase tracking-[0.3em] text-[11px] rounded-[2rem] transition-all duration-500 shadow-xl shadow-gold/10 mt-4 relative overflow-hidden group/btn cursor-pointer flex items-center justify-center disabled:opacity-50"
+                        >
+                          <span className="relative z-10">{contactStatus === 'sending' ? 'Sending Inquiry...' : 'Send Inquiry'}</span>
+                          {/* Internal shimmering light sweep */}
+                          {contactStatus !== 'sending' && (
+                            <motion.div
+                              animate={{ x: ["-100%", "200%"] }}
+                              transition={{ duration: 4, repeat: Infinity, ease: "linear", delay: 1 }}
+                              className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent skew-x-[-20deg]"
+                            />
+                          )}
+                        </motion.button>
+                      </motion.form>
+                    )}
+                  </AnimatePresence>
                 </div>
               </motion.div>
             </div>
