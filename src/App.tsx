@@ -855,6 +855,7 @@ export default function App() {
   const [isInContact, setIsInContact] = React.useState(false);
   const [warehouseState, setWarehouseState] = React.useState({ clicks: 0, threshold: 7, showMust: false });
   const [heroBgClicks, setHeroBgClicks] = React.useState(0);
+  const [heroBgThreshold, setHeroBgThreshold] = React.useState(2);
   const [containerDropData, setContainerDropData] = React.useState({ show: false, index: 0, startX: '50%', initRot: -20, endRot: 45 });
 
   const [franchiseClicks, setFranchiseClicks] = React.useState(0);
@@ -872,7 +873,7 @@ export default function App() {
   const handleFranchiseClick = (e: React.MouseEvent) => {
     setFranchiseClicks(prev => {
       const next = prev + 1;
-      if (next >= 15) {
+      if (next >= 3) {
         const types: Array<'dollar' | 'dollar_50' | 'dollar_20' | 'euro' | 'euro_50' | 'euro_200' | 'euro_500' | 'yuan' | 'yuan_50' | 'yuan_20'> = [
           'dollar', 'dollar_50', 'dollar_20',
           'euro', 'euro_50', 'euro_200', 'euro_500',
@@ -960,8 +961,9 @@ export default function App() {
   const handleHeroBgClick = () => {
     setHeroBgClicks(prev => {
       const next = prev + 1;
-      if (next >= 10) {
+      if (next >= heroBgThreshold) {
         triggerContainerDrop();
+        setHeroBgThreshold(t => t * 2);
         return 0;
       }
       return next;
