@@ -117,7 +117,7 @@ const AttentionButton = ({ children, onClick, className, style }: { children: Re
   }, [isInView]);
 
   return (
-    <div ref={ref} className="relative inline-block">
+    <div ref={ref} className="relative flex justify-center flex-1 sm:flex-initial min-w-0 lg:inline-block lg:w-auto">
       <button
         onClick={onClick}
         className={`${className} relative overflow-hidden transition-all duration-500 ease-out active:scale-95`}
@@ -1450,14 +1450,14 @@ export default function App() {
                 </p>
 
                 <div className="flex flex-col items-center lg:items-start gap-0 lg:gap-10 -mt-8 lg:mt-0">
-                  <div className="h-[60px] flex items-center justify-center lg:justify-start w-full lg:w-auto relative">
+                  <div className="h-[80px] flex items-center justify-center lg:justify-start w-full lg:w-auto relative">
                     {/* State 1: Start Partnership */}
                     <div
                       className={`transition-all duration-500 absolute inset-0 flex items-center justify-center lg:justify-start ${!isPartnershipExpanded ? 'opacity-100 scale-100 pointer-events-auto' : 'opacity-0 scale-95 pointer-events-none'}`}
                     >
                       <button
                         onClick={() => setIsPartnershipExpanded(true)}
-                        className="py-4 bg-gold text-white rounded-full font-bold text-[11px] uppercase tracking-[0.25em] shadow-2xl shadow-gold/20 hover:scale-105 transition-all cursor-pointer flex items-center gap-3 group w-[320px] justify-center"
+                        className="px-16 py-7 bg-gold text-white rounded-full font-bold text-[11px] uppercase tracking-[0.25em] shadow-2xl shadow-gold/20 hover:scale-105 transition-all cursor-pointer flex items-center gap-3 group min-w-[320px] justify-center"
                       >
                         Start Partnership
                         <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
@@ -1468,20 +1468,20 @@ export default function App() {
                     <div
                       className={`transition-all duration-500 delay-100 absolute inset-0 flex items-center justify-center lg:justify-start ${isPartnershipExpanded ? 'opacity-100 scale-100 pointer-events-auto' : 'opacity-0 scale-95 pointer-events-none'}`}
                     >
-                      <div className="flex flex-row gap-4 items-center justify-center lg:justify-start w-full lg:w-auto">
+                      <div className="flex flex-row gap-2 sm:gap-4 items-center w-full sm:w-auto justify-center lg:justify-start">
                         <AttentionButton
                           onClick={(e) => scrollToSection(e as any, 'franchise')}
-                          className="py-4 bg-gold text-white rounded-full font-bold text-[11px] uppercase tracking-[0.2em] shadow-2xl shadow-gold/20 hover:scale-105 transition-all cursor-pointer flex items-center gap-2 group w-[152px] justify-center"
+                          className="w-full flex-1 px-3 py-5 sm:px-16 sm:py-7 bg-gold text-white rounded-full font-bold text-[9px] sm:text-[11px] uppercase tracking-[0.1em] sm:tracking-[0.25em] shadow-2xl shadow-gold/20 hover:scale-105 transition-all cursor-pointer flex items-center gap-1.5 sm:gap-3 group sm:min-w-[320px] justify-center min-w-0"
                         >
-                          Franchise
-                          <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                          Explore Franchise
+                          <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 group-hover:translate-x-1 transition-transform flex-shrink-0" />
                         </AttentionButton>
                         <AttentionButton
                           onClick={(e) => scrollToSection(e as any, 'investment')}
-                          className="py-4 bg-gold text-white rounded-full font-bold text-[11px] uppercase tracking-[0.2em] shadow-2xl shadow-gold/20 hover:scale-105 transition-all cursor-pointer flex items-center gap-2 group w-[152px] justify-center"
+                          className="w-full flex-1 px-3 py-5 sm:px-16 sm:py-7 bg-gold text-white rounded-full font-bold text-[9px] sm:text-[11px] uppercase tracking-[0.1em] sm:tracking-[0.25em] shadow-2xl shadow-gold/20 hover:scale-105 transition-all cursor-pointer flex items-center gap-1.5 sm:gap-3 group sm:min-w-[320px] justify-center min-w-0"
                         >
-                          Investment
-                          <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                          Investment Offering
+                          <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 group-hover:translate-x-1 transition-transform flex-shrink-0" />
                         </AttentionButton>
                       </div>
                     </div>
