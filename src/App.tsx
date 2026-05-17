@@ -854,8 +854,7 @@ export default function App() {
   const [showScrollTop, setShowScrollTop] = React.useState(false);
   const [isInContact, setIsInContact] = React.useState(false);
   const [warehouseState, setWarehouseState] = React.useState({ clicks: 0, threshold: 7, showMust: false });
-  const [heroBgClicks, setHeroBgClicks] = React.useState(0);
-  const [heroBgThreshold, setHeroBgThreshold] = React.useState(2);
+  const [heroState, setHeroState] = React.useState({ clicks: 0, threshold: 2 });
   const [containerDropData, setContainerDropData] = React.useState({ show: false, index: 0, startX: '50%', initRot: -20, endRot: 45 });
 
   const [franchiseClicks, setFranchiseClicks] = React.useState(0);
@@ -959,14 +958,13 @@ export default function App() {
   }, []);
 
   const handleHeroBgClick = () => {
-    setHeroBgClicks(prev => {
-      const next = prev + 1;
-      if (next >= heroBgThreshold) {
+    setHeroState(prev => {
+      const nextClicks = prev.clicks + 1;
+      if (nextClicks >= prev.threshold) {
         triggerContainerDrop();
-        setHeroBgThreshold(t => t * 2);
-        return 0;
+        return { clicks: 0, threshold: prev.threshold * 2 };
       }
-      return next;
+      return { ...prev, clicks: nextClicks };
     });
   };
 
