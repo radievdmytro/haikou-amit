@@ -855,7 +855,14 @@ export default function App() {
   const [isInContact, setIsInContact] = React.useState(false);
   const [warehouseState, setWarehouseState] = React.useState({ clicks: 0, threshold: 7, showMust: false });
   const [heroState, setHeroState] = React.useState({ clicks: 0, threshold: 2 });
-  const [containerDropData, setContainerDropData] = React.useState({ show: false, index: 0, startX: '50%', initRot: -20, endRot: 45 });
+  const [fallingContainers, setFallingContainers] = React.useState<Array<{
+    id: number;
+    index: number;
+    startX: string;
+    initRot: number;
+    endRot: number;
+  }>>([]);
+  const containerIdCounter = React.useRef(0);
 
   const [franchiseClicks, setFranchiseClicks] = React.useState(0);
   const [fallingBills, setFallingBills] = React.useState<Array<{
@@ -946,15 +953,18 @@ export default function App() {
   };
 
   const triggerContainerDrop = React.useCallback(() => {
-    setContainerDropData(prevData => {
-      let newIndex = Math.floor(Math.random() * 3) + 1;
-      if (newIndex === prevData.index) newIndex = (newIndex % 3) + 1;
-      const startX = Math.floor(Math.random() * 70 + 15) + '%';
-      const initRot = Math.floor(Math.random() * 180) - 90;
-      const endRot = initRot + (Math.floor(Math.random() * 540) + 180) * (Math.random() > 0.5 ? 1 : -1);
-      return { show: true, index: newIndex, startX, initRot, endRot };
-    });
-    setTimeout(() => setContainerDropData(d => ({ ...d, show: false })), 4000);
+    const newId = containerIdCounter.current++;
+    const newIndex = Math.floor(Math.random() * 3) + 1;
+    const startX = Math.floor(Math.random() * 70 + 15) + '%';
+    const initRot = Math.floor(Math.random() * 180) - 90;
+    const endRot = initRot + (Math.floor(Math.random() * 540) + 180) * (Math.random() > 0.5 ? 1 : -1);
+
+    const newContainer = { id: newId, index: newIndex, startX, initRot, endRot };
+
+    setFallingContainers(prev => [...prev, newContainer]);
+    setTimeout(() => {
+      setFallingContainers(prev => prev.filter(c => c.id !== newId));
+    }, 4500);
   }, []);
 
   const handleHeroBgClick = () => {
@@ -1322,9 +1332,10 @@ export default function App() {
               </motion.div>
 
               <AnimatePresence>
-                {containerDropData.show && (
+                {fallingContainers.map(container => (
                   <motion.img
-                    initial={{ y: -800, rotate: containerDropData.initRot }}
+                    key={container.id}
+                    initial={{ y: -800, rotate: container.initRot }}
                     animate={{
                       y: typeof window !== 'undefined' ? [
                         -800,
@@ -1333,10 +1344,10 @@ export default function App() {
                         window.innerHeight + 800
                       ] : [-800, 700, 500, 1800],
                       rotate: [
-                        containerDropData.initRot,
-                        containerDropData.initRot + (containerDropData.endRot - containerDropData.initRot) * 0.5,
-                        containerDropData.initRot + (containerDropData.endRot - containerDropData.initRot) * 0.7,
-                        containerDropData.endRot
+                        container.initRot,
+                        container.initRot + (container.endRot - container.initRot) * 0.5,
+                        container.initRot + (container.endRot - container.initRot) * 0.7,
+                        container.endRot
                       ]
                     }}
                     exit={{ opacity: 0 }}
@@ -1345,11 +1356,11 @@ export default function App() {
                       times: [0, 0.45, 0.65, 1],
                       ease: ["easeIn", "easeOut", "easeIn"]
                     }}
-                    src={containerDropData.index === 1 ? "container_3d.webp" : `container_3d_${containerDropData.index}.webp`}
+                    src={container.index === 1 ? "container_3d.webp" : `container_3d_${container.index}.webp`}
                     className="absolute top-0 z-[100] w-64 lg:w-96 object-contain pointer-events-none"
-                    style={{ left: containerDropData.startX, x: '-50%' }}
+                    style={{ left: container.startX, x: '-50%' }}
                   />
-                )}
+                ))}
               </AnimatePresence>
 
               <div className="relative z-10 max-w-5xl">
