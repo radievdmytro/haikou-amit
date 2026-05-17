@@ -769,6 +769,82 @@ const SectionTimeline = () => {
   );
 };
 
+// --- BentBillCanvas: renders a curved paper-arc banknote via 2D canvas strips ---
+function BentBillCanvas({ src, phaseOffset }: { src: string; phaseOffset: number }) {
+  const canvasRef = React.useRef<HTMLCanvasElement>(null);
+  const animRef   = React.useRef<number>(0);
+  const imgRef    = React.useRef<HTMLImageElement | null>(null);
+
+  React.useEffect(() => {
+    const img = new window.Image();
+    img.src = src;
+    img.onload = () => { imgRef.current = img; };
+    return () => { img.onload = null; };
+  }, [src]);
+
+  React.useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const W      = 160;
+    const H      = Math.round(W / 2.35); // ~68px
+    const PAD    = 22;
+    const STRIPS = 24;
+    const t0     = Date.now();
+
+    canvas.width  = W;
+    canvas.height = H + PAD * 2;
+
+    const bendAt = (px: number, t: number) => {
+      const p = px / W;  // 0..1
+      // Primary arc: U-curve like banana curl — the main visible bend
+      const arc     = Math.sin(p * Math.PI) * 14;
+      // Secondary: gentle flutter riding on top of the arc
+      const flutter = Math.sin(p * Math.PI * 2 + t * 1.5 + phaseOffset) * 3.5;
+      // Slow tilt: whole bill rocks slowly
+      const tilt    = (p - 0.5) * Math.sin(t * 0.9 + phaseOffset * 0.6) * 5;
+      return arc + flutter + tilt;
+    };
+
+    const draw = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const img = imgRef.current;
+      if (img) {
+        const t      = (Date.now() - t0) / 1000;
+        const sw     = img.naturalWidth  / STRIPS;
+        const dw     = W / STRIPS;
+
+        for (let s = 0; s < STRIPS; s++) {
+          const xL = s * dw;
+          const xR = xL + dw;
+          const bL = bendAt(xL, t);
+          const bR = bendAt(xR, t);
+
+          ctx.save();
+          ctx.beginPath();
+          ctx.moveTo(xL, PAD + bL);
+          ctx.lineTo(xR, PAD + bR);
+          ctx.lineTo(xR, PAD + bR + H);
+          ctx.lineTo(xL, PAD + bL + H);
+          ctx.closePath();
+          ctx.clip();
+          ctx.setTransform(1, (bR - bL) / dw, 0, 1, xL, PAD + bL);
+          ctx.drawImage(img, s * sw, 0, sw, img.naturalHeight, 0, 0, dw, H);
+          ctx.restore();
+        }
+      }
+      animRef.current = requestAnimationFrame(draw);
+    };
+
+    animRef.current = requestAnimationFrame(draw);
+    return () => cancelAnimationFrame(animRef.current);
+  }, [src, phaseOffset]);
+
+  return <canvas ref={canvasRef} style={{ display: 'block', borderRadius: '2px' }} />;
+}
+
 // --- Main App ---
 
 export default function App() {
@@ -1124,41 +1200,39 @@ export default function App() {
                 translateX: '-50%',
               }}
             >
-              {/* Inner: 3-axis rotation with preserve-3d */}
+              {/* Inner: 3-axis rotation — CSS 3D perspective on the bent canvas */}
               <motion.div
                 style={{ transformStyle: 'preserve-3d' }}
                 animate={{
-                  /* rotateY = the main flip – bill tumbles around vertical axis */
+                  /* rotateY: main perspective lean — oscillates between ±50° */
                   rotateY: [
-                    bill.initRot % 360,
-                    (bill.initRot + 120) % 360,
-                    (bill.initRot + 200) % 360,
-                    (bill.initRot + 310) % 360,
-                    (bill.initRot + 360) % 360
+                    (bill.initRot % 100) - 30,
+                    (bill.initRot % 100) + 40,
+                    (bill.initRot % 100) - 50,
+                    (bill.initRot % 100) + 20,
+                    (bill.initRot % 100) - 10,
+                    (bill.initRot % 100) - 30
                   ],
-                  /* rotateX = flutter – like a leaf tilting toward/away */
-                  rotateX: [0, -28, 18, -35, 12, -22, 8, -15, 0],
-                  /* rotateZ = slow drift / tumble on Z axis */
-                  rotateZ: [bill.initRot * 0.12, 8, -10, 14, -6, 10, -8, 0]
+                  /* rotateX: forward/back flutter */
+                  rotateX: [0, -18, 12, -25, 8, -14, 0],
+                  /* rotateZ: slow orientation drift */
+                  rotateZ: [
+                    (bill.initRot % 30) - 15,
+                    (bill.initRot % 30) - 15 + 8,
+                    (bill.initRot % 30) - 15 - 6,
+                    (bill.initRot % 30) - 15 + 4,
+                    (bill.initRot % 30) - 15
+                  ]
                 }}
                 transition={{
-                  rotateY: { duration: bill.fallDuration, ease: 'linear' },
+                  rotateY: { duration: bill.fallDuration, ease: 'easeInOut' },
                   rotateX: { duration: bill.fallDuration, ease: 'easeInOut' },
                   rotateZ: { duration: bill.fallDuration, ease: 'easeInOut' }
                 }}
               >
-                <img
+                <BentBillCanvas
                   src={`${bill.type}.webp`}
-                  alt=""
-                  draggable={false}
-                  style={{
-                    width: '160px',
-                    height: 'auto',
-                    display: 'block',
-                    backfaceVisibility: 'visible',
-                    borderRadius: '3px',
-                    boxShadow: '0 20px 50px rgba(0,0,0,0.35), 0 5px 15px rgba(0,0,0,0.15)'
-                  }}
+                  phaseOffset={bill.id * 1.7}
                 />
               </motion.div>
             </motion.div>
