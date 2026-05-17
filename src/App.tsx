@@ -1272,7 +1272,7 @@ export default function App() {
                   baseX={imgX}
                 >
                   <div
-                    className="relative"
+                    className="relative aspect-square w-full"
                     style={{ transformStyle: "preserve-3d" }}
                     onClick={handleWarehouseClick}
                   >
@@ -1414,7 +1414,7 @@ export default function App() {
                   }}
                   className="lg:w-[52%] relative"
                 >
-                  <div className="relative" style={{ transformStyle: "preserve-3d" }}>
+                  <div className="relative aspect-[3/2] w-full" style={{ transformStyle: "preserve-3d" }}>
                     <div className="absolute -inset-10 bg-[#C9A84C]/5 rounded-[4rem] blur-3xl" />
                     <img
                       src="office.webp"
@@ -1473,9 +1473,9 @@ export default function App() {
                           </div>
                         </div>
                       </div>
-                      <div className="relative overflow-hidden bg-white">
+                      <div className="relative overflow-hidden bg-white aspect-[1264/848] w-full">
                         <motion.div style={{ opacity: imgOpacity }}>
-                          <img src="site.webp" loading="lazy" alt="Platform" className="w-full h-auto block" />
+                          <img src="site.webp" loading="lazy" alt="Platform" className="w-full h-auto block" style={{ aspectRatio: "1264 / 848" }} />
                         </motion.div>
                         <motion.div
                           style={{ opacity: placeholderOpacity }}
@@ -1567,7 +1567,7 @@ export default function App() {
                         </div>
                       </div>
                     </div>
-                    <div className="relative overflow-hidden bg-white">
+                    <div className="relative overflow-hidden bg-white aspect-[1264/848] w-full">
                       <motion.div style={{ opacity: imgOpacity }}>
                         <img
                           src="site.webp"
