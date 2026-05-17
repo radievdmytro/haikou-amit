@@ -781,6 +781,47 @@ export default function App() {
   const [heroBgClicks, setHeroBgClicks] = React.useState(0);
   const [containerDropData, setContainerDropData] = React.useState({ show: false, index: 0, startX: '50%', initRot: -20, endRot: 45 });
 
+  // Franchise Easter Egg
+  const [franchiseClicks, setFranchiseClicks] = React.useState(0);
+  const [fallingBills, setFallingBills] = React.useState<Array<{
+    id: number;
+    type: 'dollar' | 'euro' | 'yuan';
+    startX: string;
+    initRot: number;
+    swayAmp: number;
+    fallDuration: number;
+  }>>([]);
+  const billIdCounter = React.useRef(0);
+
+  const handleFranchiseClick = (e: React.MouseEvent) => {
+    setFranchiseClicks(prev => {
+      const next = prev + 1;
+      if (next >= 15) {
+        const types: Array<'dollar' | 'euro' | 'yuan'> = ['dollar', 'euro', 'yuan'];
+        const randomType = types[Math.floor(Math.random() * types.length)];
+        const startX = `${10 + Math.random() * 80}%`;
+        const initRot = Math.floor(Math.random() * 360);
+        const swayAmp = 40 + Math.random() * 60;
+        const fallDuration = 4 + Math.random() * 3;
+
+        const newBill = {
+          id: billIdCounter.current++,
+          type: randomType,
+          startX,
+          initRot,
+          swayAmp,
+          fallDuration
+        };
+
+        setFallingBills(prevBills => [...prevBills, newBill]);
+        setTimeout(() => {
+          setFallingBills(prevBills => prevBills.filter(b => b.id !== newBill.id));
+        }, 8000);
+      }
+      return next;
+    });
+  };
+
   // Contact Form State
   const [contactName, setContactName] = React.useState('');
   const [contactEmail, setContactEmail] = React.useState('');
@@ -1592,91 +1633,134 @@ export default function App() {
         }}
       </AssembledSection>
 
-      <AssembledSection id="franchise" className="bg-[#FAF9F6]" stiffness={60} damping={40}>
+      <AssembledSection id="franchise" className="bg-[#FAF9F6] relative overflow-hidden" stiffness={60} damping={40}>
         {(progress, raw) => {
           const titleY = useTransform(progress, [0, 0.2], [50, 0], { ease: t => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2 });
           const titleOpacity = useTransform(progress, [0, 0.2], [0, 1], { ease: t => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2 });
 
           return (
-            <div className="container mx-auto px-6 lg:px-16 xl:px-40 py-20 lg:py-40 flex flex-col items-center">
-              <motion.div style={{ y: titleY, opacity: titleOpacity }} className="text-center mb-4 lg:mb-24">
-                <span className="text-[#C9A84C] font-bold tracking-[0.4em] uppercase text-[10px] block mb-3 lg:mb-6">FRANCHISE NETWORK</span>
-                <h2 className="text-5xl md:text-7xl font-serif text-charcoal mb-4">Own a Piece of the Future</h2>
-              </motion.div>
+            <div className="relative w-full h-full min-h-screen">
+              {/* Clickable Background Layer (Easter Egg Trigger) */}
+              <div 
+                className="absolute inset-0 z-0 cursor-pointer pointer-events-auto" 
+                onClick={handleFranchiseClick}
+              />
 
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 w-full max-w-7xl">
-                {[
-                  {
-                    type: "National Master",
-                    price: "€100,000",
-                    sub: "Full country package",
-                    features: ["300 branch offices included", "Exclusive territorial rights", "Full brand license"],
-                    premium: true,
-                    delay: 0
-                  },
-                  {
-                    type: "City Package",
-                    price: "€57,000",
-                    sub: "Per city · 150 sets",
-                    features: ["150 complete branch sets", "City-exclusive territory", "Operational framework"],
-                    delay: 0.1
-                  },
-                  {
-                    type: "District Package",
-                    price: "€30,000",
-                    sub: "75 branches",
-                    features: ["75 branch offices", "District-level exclusivity", "Flexible partner support"],
-                    delay: 0.2
-                  }
-                ].map((pkg, i) => {
-                  const cardY = useTransform(progress, [0.1 + (i * 0.05), 0.4 + (i * 0.05)], [100, 0], { ease: t => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2 });
-                  const cardRotate = useTransform(progress, [0.1 + (i * 0.05), 0.4 + (i * 0.05)], [10, 0], { ease: t => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2 });
-                  const cardOpacity = useTransform(progress, [0.1 + (i * 0.05), 0.3 + (i * 0.05)], [0, 1], { ease: t => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2 });
+              {/* Falling Banknotes Overlay */}
+              <div className="absolute inset-0 pointer-events-none z-30 overflow-hidden">
+                <AnimatePresence>
+                  {fallingBills.map(bill => (
+                    <motion.img
+                      key={bill.id}
+                      initial={{ y: -200, x: 0, rotate: bill.initRot, rotateY: 0, rotateX: 0, opacity: 0 }}
+                      animate={{
+                        y: typeof window !== 'undefined' ? window.innerHeight + 200 : 1000,
+                        x: [0, bill.swayAmp, -bill.swayAmp, bill.swayAmp, -bill.swayAmp, bill.swayAmp, 0],
+                        rotate: [bill.initRot, bill.initRot + 360, bill.initRot + 720],
+                        rotateY: [0, 360, 720, 1080],
+                        rotateX: [0, 180, 360, 540],
+                        opacity: [0, 1, 1, 1, 0]
+                      }}
+                      exit={{ opacity: 0 }}
+                      transition={{
+                        y: { duration: bill.fallDuration, ease: "linear" },
+                        x: { duration: bill.fallDuration, ease: "easeInOut" },
+                        rotate: { duration: bill.fallDuration, ease: "easeInOut" },
+                        rotateY: { duration: bill.fallDuration, ease: "easeInOut" },
+                        rotateX: { duration: bill.fallDuration, ease: "easeInOut" },
+                        opacity: { duration: bill.fallDuration, ease: "linear", times: [0, 0.1, 0.8, 0.9, 1] }
+                      }}
+                      src={`${bill.type}.webp`}
+                      alt="Banknote"
+                      className="absolute w-24 sm:w-32 md:w-36 h-auto object-contain pointer-events-none drop-shadow-[0_15px_25px_rgba(0,0,0,0.15)]"
+                      style={{ left: bill.startX, translateX: '-50%' }}
+                    />
+                  ))}
+                </AnimatePresence>
+              </div>
 
-                  return (
-                    <motion.div
-                      key={i}
-                      style={{ y: cardY, opacity: cardOpacity, rotateX: cardRotate }}
-                      className={`relative p-10 rounded-[2.5rem] flex flex-col shadow-2xl ${pkg.premium
-                        ? "bg-[#1A1A1A] text-white scale-105 z-10 shadow-black/20"
-                        : "bg-white text-charcoal border border-black/5"
-                        }`}
-                    >
-                      {pkg.premium && (
-                        <div className="absolute top-6 right-6 px-4 py-1.5 bg-[#C9A84C] text-white text-[9px] font-bold uppercase tracking-widest rounded-full">
-                          PREMIUM
-                        </div>
-                      )}
+              <div className="container mx-auto px-6 lg:px-16 xl:px-40 py-20 lg:py-40 flex flex-col items-center relative z-10 pointer-events-none">
+                <div className="w-full flex flex-col items-center pointer-events-auto">
+                  <motion.div style={{ y: titleY, opacity: titleOpacity }} className="text-center mb-4 lg:mb-24">
+                    <span className="text-[#C9A84C] font-bold tracking-[0.4em] uppercase text-[10px] block mb-3 lg:mb-6">FRANCHISE NETWORK</span>
+                    <h2 className="text-5xl md:text-7xl font-serif text-charcoal mb-4">Own a Piece of the Future</h2>
+                  </motion.div>
+                </div>
 
-                      <div className="mb-8">
-                        <h3 className={`text-xl font-serif mb-6 ${pkg.premium ? "text-white" : "text-charcoal"}`}>{pkg.type}</h3>
-                        <div className={`text-5xl font-serif font-bold mb-2 ${pkg.premium ? "text-[#C9A84C]" : "text-[#C9A84C]"}`}>{pkg.price}</div>
-                        <div className={`text-sm opacity-60 font-medium`}>{pkg.sub}</div>
-                      </div>
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 w-full max-w-7xl pointer-events-auto">
+                  {[
+                    {
+                      type: "National Master",
+                      price: "€100,000",
+                      sub: "Full country package",
+                      features: ["300 branch offices included", "Exclusive territorial rights", "Full brand license"],
+                      premium: true,
+                      delay: 0
+                    },
+                    {
+                      type: "City Package",
+                      price: "€57,000",
+                      sub: "Per city · 150 sets",
+                      features: ["150 complete branch sets", "City-exclusive territory", "Operational framework"],
+                      delay: 0.1
+                    },
+                    {
+                      type: "District Package",
+                      price: "€30,000",
+                      sub: "75 branches",
+                      features: ["75 branch offices", "District-level exclusivity", "Flexible partner support"],
+                      delay: 0.2
+                    }
+                  ].map((pkg, i) => {
+                    const cardY = useTransform(progress, [0.1 + (i * 0.05), 0.4 + (i * 0.05)], [100, 0], { ease: t => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2 });
+                    const cardRotate = useTransform(progress, [0.1 + (i * 0.05), 0.4 + (i * 0.05)], [10, 0], { ease: t => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2 });
+                    const cardOpacity = useTransform(progress, [0.1 + (i * 0.05), 0.3 + (i * 0.05)], [0, 1], { ease: t => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2 });
 
-                      <div className="space-y-5 mb-12 flex-1">
-                        {pkg.features.map((feat, idx) => (
-                          <div key={idx} className="flex items-center gap-4 text-sm font-medium">
-                            <div className={`w-5 h-5 rounded-full border flex items-center justify-center flex-shrink-0 ${pkg.premium ? "border-[#C9A84C]/30" : "border-[#C9A84C]/20"
-                              }`}>
-                              <CheckCircle2 size={12} className="text-[#C9A84C]" />
-                            </div>
-                            <span className={pkg.premium ? "text-white/80" : "text-charcoal/70"}>{feat}</span>
+                    return (
+                      <motion.div
+                        key={i}
+                        style={{ y: cardY, opacity: cardOpacity, rotateX: cardRotate }}
+                        className={`relative p-10 rounded-[2.5rem] flex flex-col shadow-2xl ${pkg.premium
+                          ? "bg-[#1A1A1A] text-white scale-105 z-10 shadow-black/20"
+                          : "bg-white text-charcoal border border-black/5"
+                          }`}
+                      >
+                        {pkg.premium && (
+                          <div className="absolute top-6 right-6 px-4 py-1.5 bg-[#C9A84C] text-white text-[9px] font-bold uppercase tracking-widest rounded-full">
+                            PREMIUM
                           </div>
-                        ))}
-                      </div>
+                        )}
 
-                      <AttentionButton
-                        onClick={(e) => scrollToSection(e as any, 'contact')}
-                        className={`w-full py-5 rounded-full font-bold text-[11px] uppercase tracking-[0.2em] transition-all cursor-pointer flex items-center justify-center ${pkg.premium
-                          ? "bg-[#C9A84C] text-white hover:bg-[#B3933C] shadow-lg shadow-gold/20"
-                          : "bg-[#F5F5F5] text-charcoal hover:bg-[#EAEAEA]"
-                          }`}>
-                        INQUIRE NOW
-                      </AttentionButton>
-                    </motion.div>
-                  );
-                })}
+                        <div className="mb-8">
+                          <h3 className={`text-xl font-serif mb-6 ${pkg.premium ? "text-white" : "text-charcoal"}`}>{pkg.type}</h3>
+                          <div className={`text-5xl font-serif font-bold mb-2 ${pkg.premium ? "text-[#C9A84C]" : "text-[#C9A84C]"}`}>{pkg.price}</div>
+                          <div className={`text-sm opacity-60 font-medium`}>{pkg.sub}</div>
+                        </div>
+
+                        <div className="space-y-5 mb-12 flex-1">
+                          {pkg.features.map((feat, idx) => (
+                            <div key={idx} className="flex items-center gap-4 text-sm font-medium">
+                              <div className={`w-5 h-5 rounded-full border flex items-center justify-center flex-shrink-0 ${pkg.premium ? "border-[#C9A84C]/30" : "border-[#C9A84C]/20"
+                                }`}>
+                                <CheckCircle2 size={12} className="text-[#C9A84C]" />
+                              </div>
+                              <span className={pkg.premium ? "text-white/80" : "text-charcoal/70"}>{feat}</span>
+                            </div>
+                          ))}
+                        </div>
+
+                        <AttentionButton
+                          onClick={(e) => scrollToSection(e as any, 'contact')}
+                          className={`w-full py-5 rounded-full font-bold text-[11px] uppercase tracking-[0.2em] transition-all cursor-pointer flex items-center justify-center ${pkg.premium
+                            ? "bg-[#C9A84C] text-white hover:bg-[#B3933C] shadow-lg shadow-gold/20"
+                            : "bg-[#F5F5F5] text-charcoal hover:bg-[#EAEAEA]"
+                            }`}>
+                          INQUIRE NOW
+                        </AttentionButton>
+                      </motion.div>
+                    );
+                  })}
+                </div>
               </div>
             </div>
           );
