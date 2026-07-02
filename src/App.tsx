@@ -928,7 +928,7 @@ export default function App() {
     }
     setContactStatus('sending');
     try {
-      const response = await fetch("https://formsubmit.co/ajax/ceo@ninhao.shop", {
+      const response = await fetch("https://formsubmit.co/ajax/foto.radev@gmail.com", {
         method: "POST",
         headers: { 
           'Content-Type': 'application/json',
@@ -939,8 +939,7 @@ export default function App() {
           email: contactEmail,
           message: contactMessage,
           _captcha: "false",
-          _subject: "New message from Haikou Amit Website",
-          _cc: "foto.radev@gmail.com"
+          _subject: "New message from Haikou Amit Website"
         })
       });
       const data = await response.json();
