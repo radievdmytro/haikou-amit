@@ -937,7 +937,9 @@ export default function App() {
         body: JSON.stringify({
           name: contactName,
           email: contactEmail,
-          message: contactMessage
+          message: contactMessage,
+          _captcha: "false",
+          _subject: "New message from Haikou Amit Website"
         })
       });
       const data = await response.json();
