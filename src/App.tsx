@@ -974,7 +974,10 @@ export default function App() {
 
     const newContainer = { id: newId, index: newIndex, startX, initRot, endRot, fallDuration };
 
-    setFallingContainers(prev => [...prev, newContainer]);
+    setFallingContainers(prev => {
+      if (prev.length >= 3) return prev;
+      return [...prev, newContainer];
+    });
     setTimeout(() => {
       setFallingContainers(prev => prev.filter(c => c.id !== newId));
     }, Math.ceil(fallDuration * 1000) + 200);
