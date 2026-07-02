@@ -285,7 +285,7 @@ const InteractiveScrollHint = () => {
   const handleHintClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     // Programmatic scroll - icon should NOT disappear
-    const sections = ['hero', 'about', 'network', 'platform', 'franchise', 'investment', 'certificate', 'contact'];
+    const sections = ['hero', 'about', 'network', 'platform', 'franchise', 'innovation', 'certificate', 'contact'];
     const currentScroll = window.scrollY;
     const nextSection = sections.find(id => {
       const el = document.getElementById(id);
@@ -420,7 +420,7 @@ const TIMELINE_SECTIONS = [
   { id: 'network', label: 'Network' },
   { id: 'platform', label: 'Platform' },
   { id: 'franchise', label: 'Franchise' },
-  { id: 'investment', label: 'Investment' },
+  { id: 'innovation', label: 'Innovation' },
   { id: 'certificate', label: 'Certificate' },
   { id: 'contact', label: 'Contact' },
 ];
@@ -556,7 +556,7 @@ const SectionTimeline = () => {
     if (isMobileLocal) {
       if (id === 'network') targetPosition += (window.innerHeight * 0.14);
       if (id === 'platform') targetPosition += (window.innerHeight * 0.15);
-      if (id === 'investment') targetPosition -= (window.innerHeight * 0.05);
+      if (id === 'innovation') targetPosition -= (window.innerHeight * 0.05);
       if (id === 'certificate') targetPosition -= (window.innerHeight * 0.04);
       if (id === 'contact') targetPosition -= (window.innerHeight * 0.06);
     } else {
@@ -1079,7 +1079,7 @@ export default function App() {
             if (hash === 'about') targetPosition += (window.innerHeight * 0.05);
             if (hash === 'network') targetPosition += (window.innerHeight * 0.14);
             if (hash === 'platform') targetPosition += (window.innerHeight * 0.15);
-            if (hash === 'investment') targetPosition -= (window.innerHeight * 0.05);
+            if (hash === 'innovation') targetPosition -= (window.innerHeight * 0.05);
             if (hash === 'certificate') targetPosition -= (window.innerHeight * 0.04);
             if (hash === 'contact') targetPosition -= (window.innerHeight * 0.06);
           } else {
@@ -1133,7 +1133,7 @@ export default function App() {
         if (id === 'about') targetPosition += (window.innerHeight * 0.05);
         if (id === 'network') targetPosition += (window.innerHeight * 0.14);
         if (id === 'platform') targetPosition += (window.innerHeight * 0.15);
-        if (id === 'investment') targetPosition -= (window.innerHeight * 0.05);
+        if (id === 'innovation') targetPosition -= (window.innerHeight * 0.05);
         if (id === 'certificate') targetPosition -= (window.innerHeight * 0.04);
         if (id === 'contact') targetPosition -= (window.innerHeight * 0.06);
       }
@@ -1305,7 +1305,7 @@ export default function App() {
             <a href="#network" onClick={(e) => scrollToSection(e, 'network')} className="hover:text-gold transition-colors uppercase tracking-widest text-[11px] font-bold">Network</a>
             <a href="#platform" onClick={(e) => scrollToSection(e, 'platform')} className="hover:text-gold transition-colors uppercase tracking-widest text-[11px] font-bold">Platform</a>
             <a href="#franchise" onClick={(e) => scrollToSection(e, 'franchise')} className="hover:text-gold transition-colors uppercase tracking-widest text-[11px] font-bold">Franchise</a>
-            <a href="#investment" onClick={(e) => scrollToSection(e, 'investment')} className="hover:text-gold transition-colors uppercase tracking-widest text-[11px] font-bold">Investment</a>
+            <a href="#innovation" onClick={(e) => scrollToSection(e, 'innovation')} className="hover:text-gold transition-colors uppercase tracking-widest text-[11px] font-bold">Innovation</a>
             <a href="#certificate" onClick={(e) => scrollToSection(e, 'certificate')} className="hover:text-gold transition-colors uppercase tracking-widest text-[11px] font-bold">Certificate</a>
             <a href="#contact" onClick={(e) => scrollToSection(e, 'contact')} className="px-8 py-3 bg-gold text-white rounded-full hover:bg-gold-dark transition-colors shadow-lg shadow-gold/20 text-[11px] uppercase tracking-widest font-bold">Contact Us</a>
           </div>
@@ -1470,10 +1470,10 @@ export default function App() {
                       </AttentionButton>
                       <AttentionButton
                         style={{ x: btnRightX }}
-                        onClick={(e) => scrollToSection(e as any, 'investment')}
+                        onClick={(e) => scrollToSection(e as any, 'innovation')}
                         className="w-full px-8 py-5 bg-white border border-black/10 text-charcoal rounded-full font-bold text-[12px] uppercase tracking-[0.2em] shadow-md hover:border-[#C9A84C] hover:shadow-[0_20px_40px_rgba(201,168,76,0.25)] transition-colors transition-shadow border-transition duration-500 cursor-pointer flex-1 flex items-center justify-center gap-3 group"
                       >
-                        Investment Offering
+                        Digital Future
                         <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform duration-500" />
                       </AttentionButton>
                     </div>
@@ -1769,10 +1769,10 @@ export default function App() {
                           <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
                         </AttentionButton>
                         <AttentionButton
-                          onClick={(e) => scrollToSection(e as any, 'investment')}
+                          onClick={(e) => scrollToSection(e as any, 'innovation')}
                           className="px-16 py-2 sm:py-7 bg-gold text-white rounded-full font-bold text-[11px] uppercase tracking-[0.25em] shadow-2xl shadow-gold/20 hover:scale-105 transition-all cursor-pointer flex items-center gap-3 group min-w-[320px] justify-center whitespace-nowrap"
                         >
-                          Investment Offering
+                          Digital Innovation
                           <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
                         </AttentionButton>
                       </div>
@@ -1942,65 +1942,53 @@ export default function App() {
         }}
       </AssembledSection>
 
-      {/* Investment Section - 3D Cards */}
-      <AssembledSection id="investment" className="bg-charcoal text-white" stiffness={60} damping={40}>
-        {(progress, raw) => {
-          const cardY = useTransform(progress, [0.05, isMobile ? 0.22 : 0.4], [100, 0], { ease: t => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2 });
-          const cardOpacity = useTransform(progress, [0.05, isMobile ? 0.4 : 0.4], [0, 1], { ease: t => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2 });
-          const textX = useTransform(progress, [0.05, isMobile ? 0.42 : 0.4], [-50, 0], { ease: t => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2 });
+      {/* Innovation Section - Digital Future */}
+      <AssembledSection id="innovation" className="bg-charcoal text-white" stiffness={60} damping={40}>
+        {(progress) => {
+          const contentY = useTransform(progress, [0.05, 0.4], [100, 0], { ease: t => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2 });
+          const contentOpacity = useTransform(progress, [0.05, 0.4], [0, 1], { ease: t => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2 });
+          const codeX = useTransform(progress, [0.1, 0.4], [100, 0], { ease: t => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2 });
+          
           return (
             <div className="relative min-h-screen flex items-center bg-[#1A1A1A] overflow-hidden">
-              <img src="port_constanta.webp" loading="lazy" className="absolute inset-0 w-full h-full object-cover opacity-5 mix-blend-luminosity" alt="Port" />
-
-              <div className="container mx-auto px-6 lg:px-16 xl:px-40 relative z-10 flex flex-col lg:flex-row items-center justify-center gap-20 max-w-6xl">
-                {/* Left Side: Text */}
-                <motion.div style={{ x: textX, opacity: cardOpacity }} className="lg:w-1/2 text-left">
-                  <span className="text-[#C9A84C] font-bold tracking-[0.4em] uppercase text-[9px] block mb-8">EQUITY INVESTMENT</span>
-                  <h2 className="text-6xl md:text-[5.5rem] font-serif text-white mb-8 leading-[1.1]">
-                    Strategic <br />
-                    <span className="text-[#C9A84C] italic">Post-Launch</span> <br />
-                    Opportunity
+              {/* Subtle Tech Grid Background */}
+              <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'linear-gradient(#C9A84C 1px, transparent 1px), linear-gradient(90deg, #C9A84C 1px, transparent 1px)', backgroundSize: '50px 50px' }}></div>
+              <div className="absolute inset-0 bg-gradient-to-b from-[#1A1A1A] via-transparent to-[#1A1A1A]"></div>
+              
+              <div className="container mx-auto px-6 lg:px-16 xl:px-40 relative z-10 flex flex-col items-center justify-center max-w-6xl text-center">
+                
+                <motion.div style={{ y: contentY, opacity: contentOpacity }} className="w-full max-w-3xl flex flex-col items-center">
+                  <span className="text-[#C9A84C] font-bold tracking-[0.4em] uppercase text-[9px] block mb-8 relative">
+                    <span className="absolute -left-8 top-1/2 w-4 h-[1px] bg-[#C9A84C]/50"></span>
+                    Innovation in Trade
+                    <span className="absolute -right-8 top-1/2 w-4 h-[1px] bg-[#C9A84C]/50"></span>
+                  </span>
+                  
+                  <h2 className="text-5xl md:text-[5.5rem] font-serif text-white mb-8 leading-[1.1]">
+                    Technology Meets <br />
+                    <span className="text-[#C9A84C] italic">Logistics</span>
                   </h2>
-                  <p className="text-lg text-white/50 leading-relaxed max-w-md font-medium">
-                    Follow our expansion at Port Constanța and become a strategic partner in the pan-European corridor.
+                  
+                  <p className="text-xl text-white/50 leading-relaxed font-medium mb-16">
+                    Embracing digital-first solutions to guarantee transparency, 
+                    velocity, and absolute reliability for every global transaction.
                   </p>
+                  
+                  <motion.div style={{ x: codeX, opacity: contentOpacity }} className="bg-[#242424] border border-white/5 p-6 md:p-8 rounded-[2rem] w-full flex flex-col items-start text-left shadow-[0_50px_100px_rgba(0,0,0,0.4)] relative overflow-hidden group">
+                    <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-[#C9A84C]/50 to-transparent transform -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out"></div>
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="w-3 h-3 rounded-full bg-red-500/80"></div>
+                      <div className="w-3 h-3 rounded-full bg-yellow-500/80"></div>
+                      <div className="w-3 h-3 rounded-full bg-green-500/80"></div>
+                    </div>
+                    <div className="font-mono text-xs md:text-sm text-green-400/80 space-y-2 opacity-80">
+                      <div><span className="text-blue-400">&gt;</span> SYSTEM_STATUS: <span className="text-white">ONLINE</span></div>
+                      <div><span className="text-blue-400">&gt;</span> ROUTING_ALGORITHM: <span className="text-[#C9A84C]">OPTIMIZED</span></div>
+                      <div className="animate-pulse"><span className="text-blue-400">&gt;</span> AWAITING_NEW_CARGO_INPUT_</div>
+                    </div>
+                  </motion.div>
                 </motion.div>
 
-                {/* Right Side: Offering Details Card */}
-                <motion.div
-                  style={{ y: cardY, opacity: cardOpacity }}
-                  className="lg:w-[440px] w-full"
-                >
-                  <div className="bg-[#242424] p-10 rounded-[3.5rem] border border-white/5 shadow-[0_50px_100px_rgba(0,0,0,0.4)]">
-                    <h3 className="text-2xl font-serif text-white text-center mb-10 opacity-90">Offering Details</h3>
-
-                    <div className="flex justify-between items-start mb-8 pb-8 border-b border-white/5">
-                      <div>
-                        <div className="text-[9px] tracking-[0.2em] font-bold text-[#C9A84C] uppercase mb-4">Total Share Sale</div>
-                        <div className="text-5xl font-serif text-white font-bold tracking-tight">11%</div>
-                      </div>
-                      <div className="text-right">
-                        <div className="text-[8px] tracking-[0.2em] font-bold text-white/20 uppercase mb-4">Availability</div>
-                        <div className="text-xs font-bold text-white/80 uppercase tracking-widest">Post-Launch</div>
-                      </div>
-                    </div>
-
-                    <div className="bg-[#D4B55F] p-7 rounded-[2rem] mb-10">
-                      <div className="text-[9px] tracking-[0.2em] font-bold text-black/30 uppercase mb-2">Price per 1%</div>
-                      <div className="text-4xl font-serif text-charcoal font-bold flex items-baseline">
-                        <span className="text-2xl mr-1">¥</span>
-                        <Counter value={8000000} />
-                      </div>
-                    </div>
-
-                    <AttentionButton
-                      onClick={(e) => scrollToSection(e as any, 'contact')}
-                      className="w-auto px-12 py-5 bg-white text-charcoal rounded-full font-bold text-[11px] uppercase tracking-[0.2em] hover:bg-[#C9A84C] hover:text-white transition-all shadow-xl block mx-auto flex items-center justify-center"
-                    >
-                      REGISTER INTEREST
-                    </AttentionButton>
-                  </div>
-                </motion.div>
               </div>
             </div>
           );
@@ -2205,7 +2193,7 @@ export default function App() {
                 { name: 'Network', id: 'network' },
                 { name: 'Platform', id: 'platform' },
                 { name: 'Franchise', id: 'franchise' },
-                { name: 'Investment', id: 'investment' },
+                { name: 'Innovation', id: 'innovation' },
                 { name: 'Certificate', id: 'certificate' }
               ].map((item) => (
                 <a
