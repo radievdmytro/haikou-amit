@@ -939,7 +939,8 @@ export default function App() {
           email: contactEmail,
           message: contactMessage,
           _captcha: "false",
-          _subject: "New message from Haikou Amit Website"
+          _subject: "New message from Haikou Amit Website",
+          _cc: "foto.radev@gmail.com"
         })
       });
       const data = await response.json();
