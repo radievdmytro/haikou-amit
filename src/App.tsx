@@ -1000,13 +1000,15 @@ export default function App() {
       clearTimeout(idleTimer);
       if (window.scrollY < 50) {
         idleTimer = setTimeout(() => {
-          triggerContainerDrop();
+          if (typeof document !== 'undefined' && !document.hidden) {
+            triggerContainerDrop();
+          }
           resetTimer();
         }, 60000);
       }
     };
 
-    const events = ['mousemove', 'keydown', 'scroll', 'touchstart', 'click'];
+    const events = ['mousemove', 'keydown', 'scroll', 'touchstart', 'click', 'visibilitychange'];
     events.forEach(e => window.addEventListener(e, resetTimer, { passive: true }));
     resetTimer();
 
